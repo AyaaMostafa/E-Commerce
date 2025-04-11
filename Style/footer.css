@@ -1,61 +1,61 @@
-
-.footer {
-    background-color: #2E2E2E;
+.footer-container {
+  background-color: #2E2E2E;
   color: #FFFFFF;
-  padding: 40px 50px 20px;
+  padding: 60px 0 40px; /* Increased padding for taller footer */
   font-size: 14px;
-  display: flex;
-  justify-content: center;
-  align-items: center; 
-  position: relative;
- 
-  }
-  .footer-container {
-    display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 210px;
-  width: 100%;
-  }
-  
+}
+
 .logo {
-     font-size: 24px;
+  font-size: 28px; /* Larger font */
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 15px; /* Increased margin */
   color: #FFFFFF;
-  }
-  
-  .contact-info p {
-    margin: 5px 0;
-  }
-  
-  
-  .column {
-    flex: 1;
-    min-width: 180px;
-    margin-bottom: 20px;
-  }
-  
-  .column h3 {
-    color: #F88C5E; 
-    margin-bottom: 10px;
-  }
-  .column a {
-    display: block;
-    color: #D3D8DE; 
-    text-decoration: none;
-    margin: 6px 0;
-  }
-  .column a:hover {
-    text-decoration: underline;
-    color: #FFFFFF;
-  }
-  .column ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .column ul li {
-    margin-bottom: 5px;
-  }
-  
+}
+
+.footer-container h2 {
+  font-size: 20px;
+  margin-bottom: 15px; /* Increased margin */
+}
+
+.footer-container h3 {
+  color: #F88C5E;
+  margin-bottom: 20px; /* Increased margin */
+  font-size: 18px;
+}
+
+.footer-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-container ul li {
+  margin-bottom: 12px; /* Increased spacing between list items */
+}
+
+.footer-container a {
+  color: #D3D8DE;
+  text-decoration: none;
+  display: inline-block; /* Makes the entire element clickable */
+  padding: 2px 0; /* Additional padding for easier clicking */
+  transition: color 0.2s ease; /* Smooth transition for hover effect */
+}
+
+.footer-container a:hover {
+  text-decoration: underline;
+  color: #FFFFFF;
+}
+
+/* Increased vertical spacing between columns */
+.footer-container .col-md-4,
+.footer-container .col-md-2 {
+  margin-bottom: 25px;
+}
+
+/* Add more height with line height */
+.footer-container p, .footer li {
+  line-height: 1.6;
+}
+
+.contact-info {
+  margin-top: 15px;
+}
