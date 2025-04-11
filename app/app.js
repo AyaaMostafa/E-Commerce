@@ -36,6 +36,7 @@ function loadPage(page) {
             // append script file
             let script = document.createElement("script");
             script.src = `../Script/${page}.js`;
+            script.type = "module"; 
             document.body.appendChild(script);
         })
         .catch(error => {
