@@ -1,7 +1,7 @@
 let content = document.getElementById("content");
 let header = document.getElementById("header");
 let footer = document.getElementById("footer");
-
+ 
 function loadHeaderFooter() {
     fetch("../Pages/header/header.html")
         .then(res => res.text())
@@ -9,7 +9,7 @@ function loadHeaderFooter() {
             header.innerHTML = html;
         })
         .catch(error => console.error('Error loading header:', error));
-
+ 
     fetch('../Pages/footer/footer.html')
         .then(res => res.text())
         .then(html => {
@@ -17,26 +17,28 @@ function loadHeaderFooter() {
         })
         .catch(error => console.error('Error loading footer:', error));
 }
-
+ 
 function loadPage(page) {
     fetch(`../Pages/${page}/${page}.html`)
         .then(res => res.text())
         .then(html => {
+ 
+            content.innerHTML = "";
             content.innerHTML = html;
-
+ 
             let oldStyle = document.getElementById("page-style");
             if (oldStyle) oldStyle.remove();
-
+ 
             // Append new CSS for the page
             let style = document.createElement("link");
             style.rel = "stylesheet";
             style.href = `../Style/${page}.css`;
             document.head.appendChild(style);
-
+ 
             // append script file
             let script = document.createElement("script");
             script.src = `../Script/${page}.js`;
-            script.type = "module"; 
+            script.type = "module";
             document.body.appendChild(script);
         })
         .catch(error => {
@@ -44,13 +46,18 @@ function loadPage(page) {
             console.error(error);
         });
 }
-
+ 
 window.onload = () => {
     loadHeaderFooter();
     loadPage("home");
 };
-
-
-
-
-
+ 
+document.getElementById('burgers-link').addEventListener('click', function(e) {
+    e.preventDefault();
+    loadPage('burger');
+});
+ 
+ 
+ 
+ 
+ 

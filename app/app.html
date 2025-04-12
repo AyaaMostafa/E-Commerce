@@ -25,17 +25,18 @@
                 <ul class="nav nav-tabs">
 
                     <li class="nav-item px-2">
-                        <a class="nav-link" href="#">Home</a>
+                        <a class="nav-link" href="#" id="home">Home</a>
                     </li>
 
                     <li class="nav-item dropdown px-2">
                         <a class="nav-link" data-bs-toggle="dropdown" href="#" role="button"
                             aria-expanded="false">Food</a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                            <li><a class="dropdown-item" href="#">Separated link</a></li>
+                            <li><a class="dropdown-item" href="#">Burgers</a></li>
+                            <li><a class="dropdown-item food-link" href="#" data-page="food/burger">Pizza</a></li>
+                            <li><a class="dropdown-item food-link" href="#" data-page="food/pizza">Pizza</a></li>
+                            <li><a class="dropdown-item food-link" href="#" data-page="food/Sandwiche">Sandwiches & Wraps</a></li> 
+                            <li><a class="dropdown-item food-link" href="#" data-page="food/pasta">Pasta</a></li>                       
                         </ul>
                     </li>
 
@@ -43,10 +44,19 @@
                         <a class="nav-link" data-bs-toggle="dropdown" href="#" role="button"
                             aria-expanded="false">Beverages</a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                            <li><a class="dropdown-item" href="#">Separated link</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="loadPage('beverages/softDrink')">Soft Drinks</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="loadPage('beverages/freshJuice')">Fresh Juice</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="loadPage('beverages/hotDrink')">Hot Drinks</a></li>
+                           
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown px-2">
+                        <a class="nav-link" data-bs-toggle="dropdown" href="#" role="button"
+                            aria-expanded="false">Desserts</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Ice Cream</a></li>
+                            <li><a class="dropdown-item" href="#">Cakes</a></li>
+                            <li><a class="dropdown-item" href="#">Brownies & Cookies</a></li>
                         </ul>
                     </li>
                 </ul>
