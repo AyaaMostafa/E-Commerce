@@ -1,7 +1,7 @@
 let content = document.getElementById("content");
 let header = document.getElementById("header");
 let footer = document.getElementById("footer");
- 
+
 function loadHeaderFooter() {
     fetch("../Pages/header/header.html")
         .then(res => res.text())
@@ -9,7 +9,7 @@ function loadHeaderFooter() {
             header.innerHTML = html;
         })
         .catch(error => console.error('Error loading header:', error));
- 
+
     fetch('../Pages/footer/footer.html')
         .then(res => res.text())
         .then(html => {
@@ -17,36 +17,42 @@ function loadHeaderFooter() {
         })
         .catch(error => console.error('Error loading footer:', error));
 
-        // fetch('../Pages/filter/filter.html')
-        // .then(res => res.text())
-        // .then(html => {
-        //     document.getElementById('filter-sidebar').innerHTML = html;
-        // })
-        // .catch(error => console.error('Error loading filter:', error));
+    // fetch('../Pages/filter/filter.html')
+    // .then(res => res.text())
+    // .then(html => {
+    //     document.getElementById('filter-sidebar').innerHTML = html;
+    // })
+    // .catch(error => console.error('Error loading filter:', error));
 
 }
- 
+
 function loadPage(page) {
     fetch(`../Pages/${page}/${page}.html`)
         .then(res => res.text())
         .then(html => {
- 
+
             content.innerHTML = "";
             content.innerHTML = html;
- 
+
+            // Remove the old style if it exists
             let oldStyle = document.getElementById("page-style");
             if (oldStyle) oldStyle.remove();
- 
+
             // Append new CSS for the page
             let style = document.createElement("link");
+            style.id = "page-style";  // Set the id to easily identify and remove it later
             style.rel = "stylesheet";
-            style.href = `../Style/${page}.css`;
+            style.href = `../Style/${page}.css`;  // Assuming `page` is a variable representing the CSS file name
             document.head.appendChild(style);
-            
- 
+
+
+            let oldScript = document.getElementById("page-script");
+            if(oldScript) oldScript.remove();
+
             // append script file
             let script = document.createElement("script");
-            script.src = `../Script/${page}.js`;
+            script.id = "page-script"
+            script.src = `../Script/${page}.js?v=${Date.now()}`;
             script.type = "module";
             document.body.appendChild(script);
         })
@@ -55,28 +61,20 @@ function loadPage(page) {
             console.error(error);
         });
 }
- 
+
 window.onload = () => {
     loadHeaderFooter();
     loadPage("home");
 };
- 
+
 document.querySelectorAll('.food-link').forEach(link => {
-    link.addEventListener('click', function(e) {
+    link.addEventListener('click', function (e) {
         e.preventDefault();
         const page = this.getAttribute('data-page');
         loadPage(page);
     });
 });
-document.querySelectorAll('.food-link').forEach(link => {
-    link.addEventListener('click', function(e) {
-        e.preventDefault();
-        const page = this.getAttribute('data-page');
-        loadPage(page);
-    });
-});
- 
- 
- 
- 
- 
+
+
+
+
