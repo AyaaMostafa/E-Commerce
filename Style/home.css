@@ -42,6 +42,8 @@
   background-color: #fff;
   transition: all 0.3s;
   border: none;
+  position: absolute;
+  
 }
 
 .card:hover .card {
@@ -147,26 +149,32 @@
 /* Custom scrollbar for the page */
 ::-webkit-scrollbar {
   width: 10px;
+  background-color: transparent;
 
  
 }
 
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
+  background-color: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #cbd5e0;
-  border-radius: 4px;
+  border: 2px solid transparent;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #a0aec0;
 }
+*{scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
 .testimonials-section {
   padding: 2rem;
   text-align: center;
   background: #fff;
+  overflow-x: hidden; 
 }
 
 .testimonials-section h2 {

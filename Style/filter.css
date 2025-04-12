@@ -1,0 +1,118 @@
+
+.filter-sidebar {
+    width: 280px;
+    background-color: #2E2E2E;
+    padding: 20px;
+    color: white;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+}
+
+.filter-section {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #444;
+}
+
+.filter-section h3 {
+    color: #F88C5E;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.filter-option {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.filter-option input[type="checkbox"],
+.filter-option input[type="radio"] {
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
+}
+
+.filter-option label {
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.filter-actions {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.filter-btn {
+    background-color: #F88C5E;
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.filter-btn:hover {
+    background-color: #FF7F50;
+}
+
+.filter-btn.secondary {
+    background-color: #444;
+}
+
+.filter-btn.secondary:hover {
+    background-color: #555;
+}
+
+.filter-toggle {
+    display: none;
+    background-color: #F88C5E;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    position: fixed;
+    top: 80px;
+    left: 10px;
+    z-index: 1001;
+}
+
+
+@media (max-width: 992px) {
+    .filter-sidebar {
+        transform: translateX(-100%);
+        height: calc(100vh - 60px);
+        top: 60px;
+    }
+    
+    .filter-sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .filter-toggle {
+        display: block;
+    }
+}
+
+.main-content {
+    margin-left: 280px;
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 992px) {
+    .main-content {
+        margin-left: 0;
+    }
+}

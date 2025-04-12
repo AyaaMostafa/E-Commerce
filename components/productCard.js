@@ -11,6 +11,8 @@ export function createCard(title, price, image) {
     const badge = document.createElement("span");
     badge.className = "badge bg-danger position-absolute top-0 start-0 m-2";
     badge.style.fontSize = "0.65rem";
+    badge.style.zIndex = "10";
+    card.style.position = 'relative';
     badge.style.padding = "0.3rem 0.6rem";
     badge.textContent = "Best Deal";
     cardContent.appendChild(badge);

@@ -16,6 +16,14 @@ function loadHeaderFooter() {
             footer.innerHTML = html;
         })
         .catch(error => console.error('Error loading footer:', error));
+
+        // fetch('../Pages/filter/filter.html')
+        // .then(res => res.text())
+        // .then(html => {
+        //     document.getElementById('filter-sidebar').innerHTML = html;
+        // })
+        // .catch(error => console.error('Error loading filter:', error));
+
 }
  
 function loadPage(page) {
@@ -34,6 +42,7 @@ function loadPage(page) {
             style.rel = "stylesheet";
             style.href = `../Style/${page}.css`;
             document.head.appendChild(style);
+            
  
             // append script file
             let script = document.createElement("script");
@@ -52,9 +61,19 @@ window.onload = () => {
     loadPage("home");
 };
  
-document.getElementById('burgers-link').addEventListener('click', function(e) {
-    e.preventDefault();
-    loadPage('burger');
+document.querySelectorAll('.food-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const page = this.getAttribute('data-page');
+        loadPage(page);
+    });
+});
+document.querySelectorAll('.food-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const page = this.getAttribute('data-page');
+        loadPage(page);
+    });
 });
  
  
