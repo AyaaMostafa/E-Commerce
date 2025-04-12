@@ -1,6 +1,9 @@
 let content = document.getElementById("content");
 let header = document.getElementById("header");
 let footer = document.getElementById("footer");
+let atam = document.getElementById("atam");
+let home = document.getElementById("home");
+
 
 function loadHeaderFooter() {
     fetch("../Pages/header/header.html")
@@ -17,12 +20,13 @@ function loadHeaderFooter() {
         })
         .catch(error => console.error('Error loading footer:', error));
 
-    // fetch('../Pages/filter/filter.html')
-    // .then(res => res.text())
-    // .then(html => {
-    //     document.getElementById('filter-sidebar').innerHTML = html;
-    // })
-    // .catch(error => console.error('Error loading filter:', error));
+    // هنا filter خللي بالك
+    fetch('../Pages/filter/filter.html')
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById('filter-sidebar').innerHTML = html;
+        })
+        .catch(error => console.error('Error loading filter:', error));
 
 }
 
@@ -47,7 +51,7 @@ function loadPage(page) {
 
 
             let oldScript = document.getElementById("page-script");
-            if(oldScript) oldScript.remove();
+            if (oldScript) oldScript.remove();
 
             // append script file
             let script = document.createElement("script");
@@ -67,12 +71,25 @@ window.onload = () => {
     loadPage("home");
 };
 
-document.querySelectorAll('.food-link').forEach(link => {
-    link.addEventListener('click', function (e) {
+document.addEventListener("click", function (e) {
+    const target = e.target;
+
+    // Handle .food-link clicks dynamically
+    if (target.classList.contains("food-link")) {
         e.preventDefault();
-        const page = this.getAttribute('data-page');
+        const page = target.getAttribute("data-page");
         loadPage(page);
-    });
+    }
+});
+
+
+
+document.addEventListener("click", function (e) {
+    // Home or Atam clicks
+    if (e.target.id === "home" || e.target.id === "atam") {
+        e.preventDefault();
+        loadPage("home");
+    }
 });
 
 

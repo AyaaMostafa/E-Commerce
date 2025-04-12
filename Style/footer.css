@@ -3,6 +3,7 @@
   color: #FFFFFF;
   padding: 60px 0 40px; /* Increased padding for taller footer */
   font-size: 14px;
+  margin: 0;
 }
 
 .logo {
