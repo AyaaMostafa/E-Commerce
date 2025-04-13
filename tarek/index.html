@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATAM - Order Food Easily</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="firebase-config.js"></script>
+</head>
+<body>
+    <header class="hero">
+        <div class="logo">ATAM</div>
+        <div class="overlay">
+            <h1>Order Your Favorite Food</h1>
+            <button class="action-btn" id="signupBtn">Sign Up</button>
+            <button class="action-btn" id="loginBtn">Login</button>
+        </div>
+    </header>
+
+    <section class="how-it-works">
+        <h2>Why Choose ATAM?</h2>
+        <div class="cards">
+            <div class="card">
+                <i class="fas fa-hamburger"></i>
+                <h3>Easy Ordering</h3>
+                <p>Order food in just a few clicks.</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-star"></i>
+                <h3>Top Quality</h3>
+                <p>Enjoy meals from the best restaurants.</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-shipping-fast"></i>
+                <h3>Fast Delivery</h3>
+                <p>Get your food delivered quickly.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal-window" id="popupModal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModal">×</span>
+            <h2 id="formTitle">Login</h2>
+            <form id="authForm">
+                <div id="nameField" class="form-group hidden">
+                    <label for="fullName"><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" id="fullName" name="fullName">
+                </div>
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div id="phoneField" class="form-group hidden">
+                    <label for="phone"><i class="fas fa-phone"></i> Phone</label>
+                    <input type="tel" id="phone" name="phone">
+                </div>
+                <div id="locationField" class="form-group hidden">
+                    <label for="location"><i class="fas fa-map-marker-alt"></i> Location</label>
+                    <input type="text" id="location" name="location">
+                </div>
+                <button type="submit" class="action-btn">Submit</button>
+                <p id="forgotPassword" class="form-group hidden">
+                    <a href="#" id="forgotPasswordLink">Forgot Password?</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 ATAM. All rights reserved.</p>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>

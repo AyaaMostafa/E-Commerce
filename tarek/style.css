@@ -1,0 +1,198 @@
+:root {
+    --dark: #1f1f1f;
+    --gray: #2a2a2a;
+    --white: #ffffff;
+    --coral: #ff7e3f;
+}
+
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background: var(--dark);
+    color: var(--white);
+}
+
+.logo {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.hero {
+    height: 100vh;
+    background: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836') center/cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.overlay {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.overlay h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.action-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background: var(--coral);
+    color: var(--white);
+    cursor: pointer;
+    margin: 5px;
+}
+
+.action-btn:hover {
+    background: var(--white);
+    color: var(--coral);
+}
+
+.how-it-works {
+    padding: 40px 20px;
+    text-align: center;
+    background: var(--gray);
+}
+
+.how-it-works h2 {
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: var(--coral);
+}
+
+.cards {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background: var(--dark);
+    padding: 20px;
+    border-radius: 10px;
+    width: 200px;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card i {
+    font-size: 30px;
+    color: var(--coral);
+    margin-bottom: 10px;
+}
+
+.card h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 14px;
+    color: #ccc;
+}
+
+.modal-window {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: var(--gray);
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 350px;
+    text-align: center;
+    border: 2px solid var(--coral);
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--white);
+}
+
+.close-btn:hover {
+    color: var(--coral);
+}
+
+.modal-content h2 {
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: var(--coral);
+}
+
+.form-group {
+    margin: 10px 0;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    color: var(--white);
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.form-group label i {
+    margin-right: 5px;
+    color: var(--coral);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid var(--white);
+    background: var(--dark);
+    color: var(--white);
+    font-size: 14px;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--coral);
+}
+
+.form-group a {
+    color: var(--coral);
+    text-decoration: none;
+}
+
+.form-group a:hover {
+    color: var(--white);
+}
+
+.hidden {
+    display: none;
+}
+
+footer {
+    background: var(--gray);
+    padding: 10px;
+    text-align: center;
+    font-size: 12px;
+}
