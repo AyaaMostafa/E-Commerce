@@ -137,7 +137,7 @@ authenticationForm.onsubmit = function(event) {
 
                 displaySuccessMessage(userData.accountType === "admin" ? "Welcome Admin!" : "Welcome Client!");
                 setTimeout(function() {
-                    window.location.href = userData.accountType === "admin" ? "admin.html" : "client.html";
+                    window.location.href = userData.accountType === "admin" ? "admin.html" : "../app/app.html";
                 }, 1500);
 
                 authenticationForm.reset();
