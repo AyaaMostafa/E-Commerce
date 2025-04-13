@@ -3,7 +3,7 @@ import { createCard } from './../components/productCard.js';
 function loadFavoriteProducts() {
     const favoriteData = [
         {
-            image: "/Resources/fav1.jpg",
+            image: "/Resources/download (1).jpg",
             title: "Chocolate Cake",
             price: 90,
             description: "Decadent chocolate cake with a rich cocoa flavor."
