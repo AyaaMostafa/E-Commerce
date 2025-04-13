@@ -23,13 +23,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function applyFilters() {
     const filters = {
-        categories: [],
         price: null
     };
-
-    document.querySelectorAll('.filter-sidebar input[type="checkbox"]:checked').forEach(checkbox => {
-        filters.categories.push(checkbox.id);
-    });
 
     const priceRadio = document.querySelector('.filter-sidebar input[type="radio"]:checked');
     if (priceRadio) {
@@ -46,10 +41,6 @@ function applyFilters() {
 }
 
 function clearFilters() {
-    document.querySelectorAll('.filter-sidebar input[type="checkbox"]').forEach(checkbox => {
-        checkbox.checked = false;
-    });
-
     document.querySelectorAll('.filter-sidebar input[type="radio"]').forEach(radio => {
         radio.checked = false;
     });
@@ -61,13 +52,6 @@ function clearFilters() {
 function loadSavedFilters() {
     const savedFilters = JSON.parse(localStorage.getItem('filters'));
     if (!savedFilters) return;
-
-    if (savedFilters.categories) {
-        savedFilters.categories.forEach(category => {
-            const checkbox = document.getElementById(category);
-            if (checkbox) checkbox.checked = true;
-        });
-    }
 
     if (savedFilters.price) {
         const priceRadio = document.querySelector(`.filter-sidebar input[type="radio"][value="${savedFilters.price}"]`);

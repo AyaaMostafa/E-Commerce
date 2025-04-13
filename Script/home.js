@@ -70,5 +70,6 @@ const products = document.getElementById("products");
     } else {
         console.error("Products container not found");
     }
+    
 
 

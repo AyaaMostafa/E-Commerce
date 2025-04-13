@@ -170,11 +170,11 @@
 *{scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
+
 .testimonials-section {
   padding: 2rem;
   text-align: center;
   background: #fff;
-  overflow-x: hidden; 
 }
 
 .testimonials-section h2 {
@@ -205,7 +205,6 @@
   border-radius: 8px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
-  margin-left: 50px;
   text-align: center;
   min-width: 300px;
 }

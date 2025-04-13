@@ -1,0 +1,51 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .simple-about {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    background-color: #f8f8f8;
+    padding-bottom: 40px;
+  }
+  
+  .about-hero {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+  }
+  
+  .hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .about-text {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    margin-top: -60px;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .about-text h1 {
+    font-size: 2.5rem;
+    color: #222;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .about-text p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+  

@@ -1,0 +1,69 @@
+
+.support-page {
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    min-height: 100vh;
+}
+
+.support-hero {
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                url('../Resources/support-hero.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 5rem 1rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.support-content {
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    padding: 0 1rem;
+}
+
+.support-section {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.contact-list {
+    list-style: none;
+    padding: 0;
+}
+
+.contact-list li {
+    margin-bottom: 0.8rem;
+    padding-left: 1.8rem;
+    position: relative;
+}
+
+.contact-list li:before {
+    content: "•";
+    color: #c49b63;
+    position: absolute;
+    left: 0;
+    font-size: 1.5rem;
+}
+
+.faq-item {
+    margin-bottom: 1.5rem;
+}
+
+.faq-item h3 {
+    color: #c49b63;
+    margin-bottom: 0.5rem;
+}
+
+.icon {
+    margin-right: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .support-hero {
+        padding: 3rem 1rem;
+    }
+}

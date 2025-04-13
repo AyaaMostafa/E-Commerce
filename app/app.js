@@ -74,15 +74,15 @@ window.onload = () => {
 document.addEventListener("click", function (e) {
     const target = e.target;
 
-    // Handle .food-link clicks dynamically
-    if (target.classList.contains("food-link")) {
+    if (target.classList.contains("food-link") || target.classList.contains("footer-link")) {
         e.preventDefault();
         const page = target.getAttribute("data-page");
-        loadPage(page);
+      
+        if (!content.innerHTML.includes(page)) {
+            loadPage(page);
+        }
     }
 });
-
-
 
 document.addEventListener("click", function (e) {
     // Home or Atam clicks
@@ -91,6 +91,8 @@ document.addEventListener("click", function (e) {
         loadPage("home");
     }
 });
+
+
 
 
 

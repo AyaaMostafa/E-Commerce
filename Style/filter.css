@@ -1,18 +1,21 @@
-
 .filter-sidebar {
     width: 280px;
     background-color: #2E2E2E;
     padding: 20px;
     color: white;
-    height: 100vh;
-    position: fixed;
-    top: 0;
+    position:fixed;
     left: 0;
+    top: 80%;
+    transform: translateY(-50%);
     z-index: 1000;
     overflow-y: auto;
     transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 10px;
+   
 }
-
 .filter-section {
     margin-bottom: 20px;
     padding-bottom: 15px;
