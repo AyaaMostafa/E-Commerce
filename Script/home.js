@@ -1,6 +1,8 @@
 
 import { createCard } from './../components/productCard.js';
 
+import { db } from "./firebase-config.js";
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 // Initialize Bootstrap carousel after content is loaded
 const carouselElement = document.getElementById("mainCarousel");
@@ -12,53 +14,67 @@ if (carouselElement) {
 }
 
 
-let data = [
-    {
-        image: "../Resources/1.png",
-        title: "Card Title 1",
-        price: 399
-    },
-    {
-        image: "../Resources/1.png",
-        title: "Card Title 2",
-        price: 399
-    },
-    {
-        image: "../Resources/1.png",
-        title: "Card Title 2",
-        price: 399
-    },
-    {
-        image: "../Resources/1.png",
-        title: "Card Title 2",
-        price: 399
-    },
-    {
-        image: "../Resources/1.png",
-        title: "Card Title 2",
-        price: 399
-    },
-    {
-        image: "../Resources/1.png",
-        title: "Card Title 2",
-        price: 399
-    },
-    {
-        image: "../Resources/1.png",
-        title: "Card Title 2",
-        price: 399
-    },
-    {
-        image: "../Resources/1.png",
-        title: "Card Title 2",
-        price: 399
-    },
-    {
-        image: "../Resources/1.png",
-        title: "Card Title 3",
-        price: 399
-    }
-];
+// let data = [
+//     {
+//         image: "../Resources/1.png",
+//         title: "Card Title 1",
+//         price: 399
+//     },
+//     {
+//         image: "../Resources/1.png",
+//         title: "Card Title 2",
+//         price: 399
+//     },
+//     {
+//         image: "../Resources/1.png",
+//         title: "Card Title 2",
+//         price: 399
+//     },
+//     {
+//         image: "../Resources/1.png",
+//         title: "Card Title 2",
+//         price: 399
+//     },
+//     {
+//         image: "../Resources/1.png",
+//         title: "Card Title 2",
+//         price: 399
+//     },
+//     {
+//         image: "../Resources/1.png",
+//         title: "Card Title 2",
+//         price: 399
+//     },
+//     {
+//         image: "../Resources/1.png",
+//         title: "Card Title 2",
+//         price: 399
+//     },
+//     {
+//         image: "../Resources/1.png",
+//         title: "Card Title 2",
+//         price: 399
+//     },
+//     {
+//         image: "../Resources/1.png",
+//         title: "Card Title 3",
+//         price: 399
+//     }
+// ];
+
+
+
+// Example: get all documents from a collection
+
+// let data = async function fetchProducts() {
+//     const querySnapshot = await getDocs(collection(db, "food"));
+//     querySnapshot.forEach((doc) => {
+
+//         // console.log(`${doc.id} =>`, doc.data());
+//     });
+// }
+
+// fetchProducts();
 
 const products = document.getElementById("products");
     if (products) {
