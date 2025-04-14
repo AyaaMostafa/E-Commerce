@@ -2,8 +2,7 @@
 
 export function createCard(title, price, image) {
     const card = document.createElement("div");
-    card.className = "col-lg-3 col-md-6 col-sm-12 mb-4 d-flex justify-content-center m-auto"; // Use flex for layout and col for responsive behavior
-
+    card.className = "col-lg-3 col-md-6 col-sm-12 mb-5 pb-4 d-flex justify-content-center";
     const cardContent = document.createElement("div");
     cardContent.className = "card border border-light-subtle shadow-sm position-relative mb-5";
 

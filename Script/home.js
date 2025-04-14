@@ -1,5 +1,5 @@
 
-import { createCard } from './../components/productCard.js';
+import {loadDataToHtml} from './fetchProducts.js'
 
 import { db } from "./firebase-config.js";
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
@@ -14,78 +14,52 @@ if (carouselElement) {
 }
 
 
-// let data = [
-//     {
-//         image: "../Resources/1.png",
-//         title: "Card Title 1",
-//         price: 399
-//     },
-//     {
-//         image: "../Resources/1.png",
-//         title: "Card Title 2",
-//         price: 399
-//     },
-//     {
-//         image: "../Resources/1.png",
-//         title: "Card Title 2",
-//         price: 399
-//     },
-//     {
-//         image: "../Resources/1.png",
-//         title: "Card Title 2",
-//         price: 399
-//     },
-//     {
-//         image: "../Resources/1.png",
-//         title: "Card Title 2",
-//         price: 399
-//     },
-//     {
-//         image: "../Resources/1.png",
-//         title: "Card Title 2",
-//         price: 399
-//     },
-//     {
-//         image: "../Resources/1.png",
-//         title: "Card Title 2",
-//         price: 399
-//     },
-//     {
-//         image: "../Resources/1.png",
-//         title: "Card Title 2",
-//         price: 399
-//     },
-//     {
-//         image: "../Resources/1.png",
-//         title: "Card Title 3",
-//         price: 399
-//     }
-// ];
-
-
-
 // Example: get all documents from a collection
-
-// let data = async function fetchProducts() {
-//     const querySnapshot = await getDocs(collection(db, "food"));
-//     querySnapshot.forEach((doc) => {
-
-//         // console.log(`${doc.id} =>`, doc.data());
-//     });
-// }
-
-// fetchProducts();
-
-const products = document.getElementById("products");
-    if (products) {
-        products.innerHTML = "";
-        for (let product of data) {
-            let productCard = createCard(product.title, product.price, product.image);
-            products.appendChild(productCard);
+async function fetchHomeProducts() {
+    let homeData = [];
+    const querySnapshot = await getDocs(collection(db, "food"));
+    let allItems = [];
+    querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        // دمج كل العناصر من المصفوفات داخل المستند
+        for (let key in data) {
+            if (Array.isArray(data[key])) {
+                allItems = allItems.concat(data[key]);
+            }
         }
-    } else {
-        console.error("Products container not found");
-    }
+    });
+
+    //console.log(allItems);
     
 
+    let count = 15;
+
+    for (let i = 0; i < count; i++)
+    {
+        let randomIndex = Math.floor(Math.random() * allItems.length);
+        if(!homeData.includes(allItems[randomIndex]))
+        {
+            let item = allItems[randomIndex];
+            homeData.push(item);
+        }
+        else
+            i--;
+
+    }
+    
+    return homeData;
+ }
+
+
+
+ let loadData = async () => {
+    let homeData = await fetchHomeProducts();
+    //console.log(homeData);  // Optional: Uncomment for debugging
+    return homeData;
+}
+
+loadData().then(res => {
+    loadDataToHtml(res);
+    console.log(res);
+});
 
