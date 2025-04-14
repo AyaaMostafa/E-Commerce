@@ -1,3 +1,6 @@
+import { db } from "./firebase-config.js";
+import { collection, getDocs, setDoc, doc, query, where, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
 const signUpButton = document.getElementById("signupBtn");
 const loginButton = document.getElementById("loginBtn");
 const modalWindow = document.getElementById("popupModal");
@@ -58,30 +61,34 @@ window.onclick = function(event) {
     if (event.target == modalWindow) modalWindow.style.display = "none";
 };
 
-forgotPasswordLink.onclick = function(event) {
+forgotPasswordLink.onclick = async function(event) {
     event.preventDefault();
     const emailInput = authenticationForm.querySelector('input[type="email"]').value;
     if (!emailInput) return displayErrorMessage("Please enter your email.");
 
-    firebase.database().ref("users").orderByChild("email").equalTo(emailInput).once("value")
-        .then(function(snapshot) {
-            if (!snapshot.exists()) return displayErrorMessage("Email not found.");
+    try {
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("email", "==", emailInput));
+        const querySnapshot = await getDocs(q);
 
-            const newPassword = Math.random().toString(36).slice(-8);
-            const encryptedNewPassword = encryptPassword(newPassword);
+        if (querySnapshot.empty) return displayErrorMessage("Email not found.");
 
-            snapshot.forEach(function(child) {
-                firebase.database().ref("users/" + child.key).update({ password: encryptedNewPassword });
+        const newPassword = Math.random().toString(36).slice(-8);
+        const encryptedNewPassword = encryptPassword(newPassword);
+
+        querySnapshot.forEach(async (docSnapshot) => {
+            await updateDoc(doc(db, "users", docSnapshot.id), {
+                password: encryptedNewPassword
             });
-
-            displaySuccessMessage(`Your new password is: ${newPassword}`);
-        })
-        .catch(function(error) {
-            displayErrorMessage("Error resetting password.");
         });
+
+        displaySuccessMessage(`Your new password is: ${newPassword}`);
+    } catch (error) {
+        displayErrorMessage("Error resetting password.");
+    }
 };
 
-authenticationForm.onsubmit = function(event) {
+authenticationForm.onsubmit = async function(event) {
     event.preventDefault();
 
     const emailInput = authenticationForm.querySelector('input[type="email"]').value;
@@ -94,57 +101,83 @@ authenticationForm.onsubmit = function(event) {
         const userLocation = locationInputSection.querySelector("input").value;
         const emailKey = emailInput.toLowerCase().replace(/\./g, "_");
 
-        firebase.database().ref("admins/" + emailKey).once("value")
-            .then(function(adminSnapshot) {
-                const userType = adminSnapshot.exists() ? "admin" : "client";
+        try {
+            // Check if email exists in admin collection (corrected from admins to admin)
+            const adminsRef = collection(db, "admin");
+            const adminQuery = query(adminsRef, where("email", "==", emailInput));
+            const adminSnapshot = await getDocs(adminQuery);
+            const userType = !adminSnapshot.empty ? "admin" : "client";
 
-                firebase.database().ref("users").orderByChild("email").equalTo(emailInput).once("value")
-                    .then(function(userSnapshot) {
-                        if (userSnapshot.exists()) return displayErrorMessage("Email already registered.");
+            // Check if email is already registered in users collection
+            const usersRef = collection(db, "users");
+            const userQuery = query(usersRef, where("email", "==", emailInput));
+            const userSnapshot = await getDocs(userQuery);
 
-                        const userData = {
-                            name: userName,
-                            email: emailInput,
-                            password: encryptedPassword,
-                            phone: userPhone,
-                            location: userLocation,
-                            accountType: userType
-                        };
+            if (!userSnapshot.empty) return displayErrorMessage("Email already registered.");
 
-                        firebase.database().ref("users").push(userData);
-                        displaySuccessMessage("Signup successful!");
-                        authenticationForm.reset();
-                        modalWindow.style.display = "none";
-                    })
-                    .catch(function(error) {
-                        displayErrorMessage("Signup failed.");
-                    });
-            })
-            .catch(function(error) {
-                displayErrorMessage("Failed to check admin status.");
-            });
+            const userData = {
+                name: userName,
+                email: emailInput,
+                password: encryptedPassword,
+                phone: userPhone,
+                location: userLocation,
+                accountType: userType
+            };
+
+            // Add user to Firestore (using emailKey as document ID)
+            await setDoc(doc(db, "users", emailKey), userData);
+
+            displaySuccessMessage("Signup successful!");
+            authenticationForm.reset();
+            modalWindow.style.display = "none";
+        } catch (error) {
+            displayErrorMessage("Signup failed.");
+        }
     } else {
-        firebase.database().ref("users").orderByChild("email").equalTo(emailInput).once("value")
-            .then(function(snapshot) {
-                if (!snapshot.exists()) return displayErrorMessage("Email not found.");
+        try {
+            let userData = null;
+            let accountType = null;
 
-                let userData;
-                snapshot.forEach(function(child) {
-                    userData = child.val();
+            // First, check in admin collection
+            const adminsRef = collection(db, "admin");
+            const adminQuery = query(adminsRef, where("email", "==", emailInput));
+            const adminSnapshot = await getDocs(adminQuery);
+
+            if (!adminSnapshot.empty) {
+                adminSnapshot.forEach(doc => {
+                    userData = doc.data();
+                    accountType = "admin"; // Force accountType to admin if found in admin collection
                 });
+            }
 
-                if (userData.password !== encryptedPassword) return displayErrorMessage("Incorrect password.");
+            // If not found in admin, check in users collection
+            if (!userData) {
+                const usersRef = collection(db, "users");
+                const userQuery = query(usersRef, where("email", "==", emailInput));
+                const userSnapshot = await getDocs(userQuery);
 
-                displaySuccessMessage(userData.accountType === "admin" ? "Welcome Admin!" : "Welcome Client!");
-                setTimeout(function() {
-                    window.location.href = userData.accountType === "admin" ? "admin.html" : "../app/app.html";
-                }, 1500);
+                if (userSnapshot.empty) return displayErrorMessage("Email not found.");
 
-                authenticationForm.reset();
-                modalWindow.style.display = "none";
-            })
-            .catch(function(error) {
-                displayErrorMessage("Login failed.");
-            });
+                userSnapshot.forEach(doc => {
+                    userData = doc.data();
+                    accountType = userData.accountType || "client"; // Use accountType from users, default to client
+                });
+            }
+
+            // Compare the encrypted password
+            if (userData.password !== encryptedPassword) return displayErrorMessage("Incorrect password.");
+
+            // Show success message based on account type
+            displaySuccessMessage(accountType === "admin" ? "Welcome Admin!" : "Welcome Client!");
+            setTimeout(function() {
+                window.location.href = accountType === "admin" ? "admin.html" : "../app/app.html";
+            }, 1500);
+
+            authenticationForm.reset();
+            modalWindow.style.display = "none";
+        } catch (error) {
+            console.error("Login error:", error); // Log the error for debugging
+            displayErrorMessage("Login failed.");
+        }
     }
 };
