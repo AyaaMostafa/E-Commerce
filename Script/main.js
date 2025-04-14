@@ -130,7 +130,7 @@ authForm.onsubmit = async (event) => {
             showSuccess(`Welcome, ${userData.name}!`);
 
             // Redirect based on account type
-            const redirectUrl = userData.accountType === "admin" ? "../Pages/adminDashboard/adminDasboard.html" : "app/app.html";
+            const redirectUrl = userData.accountType === "admin" ? "../Pages/adminDashboard/adminDasboard.html" : `app/app.html?email=${userData.email}`;
             setTimeout(() => window.location.href = redirectUrl, 1000);
 
             toggleModal(false);
