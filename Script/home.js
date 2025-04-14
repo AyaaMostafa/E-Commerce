@@ -54,12 +54,11 @@ async function fetchHomeProducts() {
 
  let loadData = async () => {
     let homeData = await fetchHomeProducts();
-    //console.log(homeData);  // Optional: Uncomment for debugging
     return homeData;
 }
 
 loadData().then(res => {
     loadDataToHtml(res);
-    console.log(res);
+    //console.log(res);
 });
 

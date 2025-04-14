@@ -4,3 +4,10 @@
 .nav-item {
     font-size: 1.5rem;
 }
+
+.card {
+    transition: all 0.3s ease;
+    border-radius: 15px !important;
+    overflow: hidden;
+    width: 16rem;
+  }
