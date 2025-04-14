@@ -5,7 +5,7 @@
     color: white;
     position:fixed;
     left: 0;
-    top: 80%;
+    top: 70%;
     transform: translateY(-50%);
     z-index: 1000;
     overflow-y: auto;
