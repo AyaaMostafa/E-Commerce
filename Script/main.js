@@ -1,183 +1,141 @@
 import { db } from "./firebase-config.js";
-import { collection, getDocs, setDoc, doc, query, where, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+import { collection, getDocs, setDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-const signUpButton = document.getElementById("signupBtn");
-const loginButton = document.getElementById("loginBtn");
-const modalWindow = document.getElementById("popupModal");
-const closeModalButton = document.getElementById("closeModal");
-const formTitleText = document.getElementById("formTitle");
-const nameInputSection = document.getElementById("nameField");
-const phoneInputSection = document.getElementById("phoneField");
-const locationInputSection = document.getElementById("locationField");
-const authenticationForm = document.getElementById("authForm");
-const forgotPasswordSection = document.getElementById("forgotPassword");
-const forgotPasswordLink = document.getElementById("forgotPasswordLink");
+// Select DOM elements
+const signupBtn = document.getElementById("signupBtn");
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const modal = document.getElementById("popupModal");
+const closeModalBtn = document.getElementById("closeModal");
+const formTitle = document.getElementById("formTitle");
+const nameField = document.getElementById("nameField");
+const phoneField = document.getElementById("phoneField");
+const locationField = document.getElementById("locationField");
+const authForm = document.getElementById("authForm");
+const authButtons = document.getElementById("authButtons");
+const logoutButton = document.getElementById("logoutButton");
 
-let isSignUpMode = false;
+let isSignupMode = false;
 
-function encryptPassword(password) {
-    return CryptoJS.SHA256(password).toString();
-}
+// Utility Functions
+const showSuccess = (message) => Swal.fire({ icon: "success", title: "Success", text: message, background: "#2a2a2a", color: "#fff", confirmButtonColor: "#ff7e3f" });
+const showError = (message) => Swal.fire({ icon: "error", title: "Error", text: message, background: "#2a2a2a", color: "#fff", confirmButtonColor: "#ff7e3f" });
+const encryptPassword = (password) => CryptoJS.SHA256(password).toString();
 
-function displaySuccessMessage(message) {
-    Swal.fire({ icon: 'success', title: 'Success', text: message, background: '#2a2a2a', color: '#fff', confirmButtonColor: '#ff7e3f' });
-}
+// Toggle Modal Visibility
+const toggleModal = (show, title, showExtraFields) => {
+    modal.style.display = show ? "flex" : "none";
+    formTitle.textContent = title;
+    nameField.classList.toggle("hidden", !showExtraFields);
+    phoneField.classList.toggle("hidden", !showExtraFields);
+    locationField.classList.toggle("hidden", !showExtraFields);
+    if (!show) authForm.reset();
+};
 
-function displayErrorMessage(message) {
-    Swal.fire({ icon: 'error', title: 'Error', text: message, background: '#2a2a2a', color: '#fff', confirmButtonColor: '#ff7e3f' });
-}
+// Check Login Status on Page Load
+document.addEventListener("DOMContentLoaded", () => {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (user) {
+        authButtons.style.display = "none";
+        logoutButton.style.display = "block";
+    } else {
+        authButtons.style.display = "block";
+        logoutButton.style.display = "none";
+    }
+});
 
-signUpButton.onclick = function() {
-    modalWindow.style.display = "flex";
-    formTitleText.innerText = "Sign Up";
-    nameInputSection.classList.remove("hidden");
-    phoneInputSection.classList.remove("hidden");
-    locationInputSection.classList.remove("hidden");
-    forgotPasswordSection.classList.add("hidden");
-    isSignUpMode = true;
+// Event Listeners for Buttons
+signupBtn.onclick = () => {
+    isSignupMode = true;
+    toggleModal(true, "Register", true);
     document.getElementById("fullName").required = true;
     document.getElementById("phone").required = true;
     document.getElementById("location").required = true;
 };
 
-loginButton.onclick = function() {
-    modalWindow.style.display = "flex";
-    formTitleText.innerText = "Login";
-    nameInputSection.classList.add("hidden");
-    phoneInputSection.classList.add("hidden");
-    locationInputSection.classList.add("hidden");
-    forgotPasswordSection.classList.remove("hidden");
-    isSignUpMode = false;
+loginBtn.onclick = () => {
+    isSignupMode = false;
+    toggleModal(true, "Login", false);
     document.getElementById("fullName").required = false;
     document.getElementById("phone").required = false;
     document.getElementById("location").required = false;
 };
 
-closeModalButton.onclick = function() {
-    modalWindow.style.display = "none";
+closeModalBtn.onclick = () => toggleModal(false);
+window.onclick = (event) => { if (event.target === modal) toggleModal(false); };
+
+// Logout Functionality
+logoutBtn.onclick = () => {
+    localStorage.removeItem("currentUser");
+    showSuccess("Logged out successfully!");
+    setTimeout(() => window.location.href = "index.html", 1500);
 };
 
-window.onclick = function(event) {
-    if (event.target == modalWindow) modalWindow.style.display = "none";
-};
-
-forgotPasswordLink.onclick = async function(event) {
-    event.preventDefault();
-    const emailInput = authenticationForm.querySelector('input[type="email"]').value;
-    if (!emailInput) return displayErrorMessage("Please enter your email.");
-
-    try {
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, where("email", "==", emailInput));
-        const querySnapshot = await getDocs(q);
-
-        if (querySnapshot.empty) return displayErrorMessage("Email not found.");
-
-        const newPassword = Math.random().toString(36).slice(-8);
-        const encryptedNewPassword = encryptPassword(newPassword);
-
-        querySnapshot.forEach(async (docSnapshot) => {
-            await updateDoc(doc(db, "users", docSnapshot.id), {
-                password: encryptedNewPassword
-            });
-        });
-
-        displaySuccessMessage(`Your new password is: ${newPassword}`);
-    } catch (error) {
-        displayErrorMessage("Error resetting password.");
-    }
-};
-
-authenticationForm.onsubmit = async function(event) {
+// Form Submission (Login or Register)
+authForm.onsubmit = async (event) => {
     event.preventDefault();
 
-    const emailInput = authenticationForm.querySelector('input[type="email"]').value;
-    const passwordInput = authenticationForm.querySelector('input[type="password"]').value;
-    const encryptedPassword = encryptPassword(passwordInput);
+    const email = authForm.querySelector('input[type="email"]').value.trim();
+    const password = authForm.querySelector('input[type="password"]').value;
+    const encryptedPassword = encryptPassword(password);
 
-    if (isSignUpMode) {
-        const userName = nameInputSection.querySelector("input").value;
-        const userPhone = phoneInputSection.querySelector("input").value;
-        const userLocation = locationInputSection.querySelector("input").value;
-        const emailKey = emailInput.toLowerCase().replace(/\./g, "_");
+    // Validation for Both Modes
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return showError("Please enter a valid email address.");
+    if (!password || password.length < 6) return showError("Password must be at least 6 characters long.");
+
+    if (isSignupMode) {
+        // Register Mode
+        const name = nameField.querySelector("input").value.trim();
+        const phone = phoneField.querySelector("input").value.trim();
+        const location = locationField.querySelector("input").value.trim();
+        const emailKey = email.toLowerCase().replace(/\./g, "_");
+
+        // Validation for Register
+        if (!name || name.length < 3) return showError("Full name must be at least 3 characters long.");
+        const phoneRegex = /^\d{10,15}$/;
+        if (!phone || !phoneRegex.test(phone)) return showError("Please enter a valid phone number (10-15 digits).");
+        if (!location || location.length < 3) return showError("Location must be at least 3 characters long.");
 
         try {
-            // Check if email exists in admin collection (corrected from admins to admin)
-            const adminsRef = collection(db, "admin");
-            const adminQuery = query(adminsRef, where("email", "==", emailInput));
-            const adminSnapshot = await getDocs(adminQuery);
-            const userType = !adminSnapshot.empty ? "admin" : "client";
-
-            // Check if email is already registered in users collection
             const usersRef = collection(db, "users");
-            const userQuery = query(usersRef, where("email", "==", emailInput));
+            const userQuery = query(usersRef, where("email", "==", email));
             const userSnapshot = await getDocs(userQuery);
 
-            if (!userSnapshot.empty) return displayErrorMessage("Email already registered.");
+            if (!userSnapshot.empty) return showError("Email already registered.");
 
-            const userData = {
-                name: userName,
-                email: emailInput,
-                password: encryptedPassword,
-                phone: userPhone,
-                location: userLocation,
-                accountType: userType
-            };
-
-            // Add user to Firestore (using emailKey as document ID)
+            const userData = { name, email, password: encryptedPassword, phone, location, accountType: "client" };
             await setDoc(doc(db, "users", emailKey), userData);
 
-            displaySuccessMessage("Signup successful!");
-            authenticationForm.reset();
-            modalWindow.style.display = "none";
+            showSuccess("Registration successful! You can now log in.");
+            toggleModal(false);
         } catch (error) {
-            displayErrorMessage("Signup failed.");
+            showError("Registration failed. Please try again.");
         }
     } else {
+        // Login Mode
         try {
+            const usersRef = collection(db, "users");
+            const userQuery = query(usersRef, where("email", "==", email));
+            const userSnapshot = await getDocs(userQuery);
+
+            if (userSnapshot.empty) return showError("Email not found.");
+
             let userData = null;
-            let accountType = null;
+            userSnapshot.forEach(doc => userData = doc.data());
 
-            // First, check in admin collection
-            const adminsRef = collection(db, "admin");
-            const adminQuery = query(adminsRef, where("email", "==", emailInput));
-            const adminSnapshot = await getDocs(adminQuery);
+            if (userData.password !== encryptedPassword) return showError("Incorrect password.");
 
-            if (!adminSnapshot.empty) {
-                adminSnapshot.forEach(doc => {
-                    userData = doc.data();
-                    accountType = "admin"; // Force accountType to admin if found in admin collection
-                });
-            }
+            localStorage.setItem("currentUser", JSON.stringify(userData));
+            showSuccess(`Welcome, ${userData.name}!`);
 
-            // If not found in admin, check in users collection
-            if (!userData) {
-                const usersRef = collection(db, "users");
-                const userQuery = query(usersRef, where("email", "==", emailInput));
-                const userSnapshot = await getDocs(userQuery);
+            // Redirect based on account type
+            const redirectUrl = userData.accountType === "admin" ? "../Pages/adminDashboard/adminDasboard.html" : "app/app.html";
+            setTimeout(() => window.location.href = redirectUrl, 1000);
 
-                if (userSnapshot.empty) return displayErrorMessage("Email not found.");
-
-                userSnapshot.forEach(doc => {
-                    userData = doc.data();
-                    accountType = userData.accountType || "client"; // Use accountType from users, default to client
-                });
-            }
-
-            // Compare the encrypted password
-            if (userData.password !== encryptedPassword) return displayErrorMessage("Incorrect password.");
-
-            // Show success message based on account type
-            displaySuccessMessage(accountType === "admin" ? "Welcome Admin!" : "Welcome Client!");
-            setTimeout(function() {
-                window.location.href = accountType === "admin" ? "admin.html" : "../app/app.html";
-            }, 1500);
-
-            authenticationForm.reset();
-            modalWindow.style.display = "none";
+            toggleModal(false);
         } catch (error) {
-            console.error("Login error:", error); // Log the error for debugging
-            displayErrorMessage("Login failed.");
+            showError("Login failed. Please try again.");
         }
     }
 };

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,15 +9,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-
 <body>
-
     <header class="hero">
         <div class="logo">ATAM</div>
         <div class="overlay">
             <h1>Order Your Favorite Food</h1>
-            <button class="action-btn" id="signupBtn">Sign Up</button>
-            <button class="action-btn" id="loginBtn">Login</button>
+            <div id="authButtons">
+                <button class="action-btn" id="signupBtn">Sign Up</button>
+                <button class="action-btn" id="loginBtn">Login</button>
+            </div>
+            <div id="logoutButton" style="display: none;">
+                <button class="action-btn" id="logoutBtn">Logout</button>
+            </div>
         </div>
     </header>
 
@@ -66,9 +68,6 @@
                     <input type="text" id="location">
                 </div>
                 <button type="submit" class="action-btn">Submit</button>
-                <p id="forgotPassword" class="form-group hidden">
-                    <a href="#" id="forgotPasswordLink">Forgot Password?</a>
-                </p>
             </form>
         </div>
     </div>
@@ -79,5 +78,4 @@
 
     <script type="module" src="Script/main.js"></script>
 </body>
-
 </html>
