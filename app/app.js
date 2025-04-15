@@ -32,13 +32,14 @@ function loadHeaderFooter() {
     fetch('../Pages/filter/filter.html')
         .then(res => res.text())
         .then(html => {
-            document.getElementById('filter-sidebar').innerHTML = html;
+            document.getElementById('filterSection').innerHTML = html;
         })
         .catch(error => console.error('Error loading filter:', error));
 
 }
 
 function loadPage(page) {
+    content.classList.add(page);
     fetch(`../Pages/${page}/${page}.html`)
         .then(res => res.text())
         .then(html => {

@@ -1,26 +1,28 @@
-<div class="filter-sidebar">
-    <h2>Filter by Price</h2>
+<div class="container mt-5 filter-card">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold mb-3 mb-md-0">Best Deals</h1>
 
-    <div class="filter-section">
-        <h3>Price Range</h3>
-        <div class="filter-option">
-            <input type="radio" id="price80" name="price" value="80" />
-            <label for="price80">Up to $80</label>
-        </div>
-        <div class="filter-option">
-            <input type="radio" id="price120" name="price" value="120" />
-            <label for="price120">Up to $120</label>
-        </div>
-        <div class="filter-option">
-            <input type="radio" id="price200" name="price" value="200" />
-            <label for="price200">Up to $200</label>
+        <div class="filter-container m-0 position-static">
+            <div class="filter-content">
+                <h2>Filter by</h2>
+
+                <div class="filter-section">
+                    <h4>Price</h4>
+                    <select id="priceDropdown" class="filter-dropdown">
+                        <option value="100">Under 100 EGP</option>
+                        <option value="200">Under 200 EGP</option>
+                        <option value="300">Under 300 EGP</option>
+                    </select>
+                </div>
+
+                <div class="filter-actions">
+                    <button id="applyFilter" class="filter-btn">Apply</button>
+                    <button id="clearFilter" class="filter-btn secondary">Clear</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="filter-actions">
-        <button id="applyFilter" class="filter-btn">Apply Filter</button>
-        <button id="clearFilter" class="filter-btn secondary">Clear All</button>
-    </div>
-    
-   
+    <!-- Filtered content here -->
+    <!-- <div id="filterSection" class="row g-4"></div> -->
 </div>
