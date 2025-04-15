@@ -1,44 +1,14 @@
-import { createCard } from '../components/productCard.js';  
+import { fetchProducts, loadDataToHtml } from './fetchProducts.js'
 
-function loadBrowniesCookiesProducts() {
-    const browniesCookiesData = [
-        {
-            image: "/Resources/download (11).jpg",
-            title: "Chocolate Brownie",
-            price: 70,
-            description: "Rich and fudgy chocolate brownie with walnuts."
-        },
-        {
-            image: "/Resources/download (11).jpg",
-            title: "Chocolate Chip Cookies",
-            price: 50,
-            description: "Classic soft cookies with gooey chocolate chips."
-        },
-        {
-            image: "/Resources/download (11).jpg",
-            title: "Caramel Brownie",
-            price: 75,
-            description: "Decadent brownie topped with a layer of rich caramel."
-        },
-        {
-            image: "/Resources/download (11).jpg",
-            title: "Oatmeal Cookies",
-            price: 55,
-            description: "Chewy oatmeal cookies with raisins and cinnamon."
-        }
-    ];
 
-    const browniesCookiesProducts = document.getElementById("browniesCookiesProducts");
+let loadData = async () => {
+  const data = await fetchProducts("dessert", "cookies");
+  console.log(data);
+  return data;
+};
 
-    if (browniesCookiesProducts) {
-        browniesCookiesProducts.innerHTML = "";  
-        browniesCookiesData.forEach(product => {
-            let productCard = createCard(product.title, product.price, product.image);
-            browniesCookiesProducts.appendChild(productCard);
-        });
-    } else {
-        console.error("Products container not found");
-    }
-}
+loadData().then(res => {
+  console.log(res);
 
-loadBrowniesCookiesProducts();
+  loadDataToHtml(res.items);
+});

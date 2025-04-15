@@ -13,6 +13,14 @@ function loadHeaderFooter() {
         })
         .catch(error => console.error('Error loading header:', error));
 
+    // append script file
+    let script = document.createElement("script");
+    script.id = "page-script"
+    script.src = `../Script/header.js`;
+    script.type = "module";
+    document.body.appendChild(script);
+
+
     fetch('../Pages/footer/footer.html')
         .then(res => res.text())
         .then(html => {
