@@ -175,12 +175,21 @@ export async function addToCart(item, email, quantity = 1) {
 
         if (docSnap.exists()) {
             const items = docSnap.data().items || [];
-            const alreadyInCart = items.some(prod => prod.name === item.name && prod.email === email);
-            if (alreadyInCart) {
+            const existingItem = items.find(prod => prod.name === item.name && prod.email === email);
+
+            if (existingItem) {
+                const newQuantity = existingItem.quantity + quantity;
+                await updateDoc(cartDocRef, {
+                    items: arrayRemove(existingItem)
+                });
+                await updateDoc(cartDocRef, {
+                    items: arrayUnion({ ...existingItem, quantity: newQuantity })
+                });
+
                 Swal.fire({
                     icon: 'info',
-                    title: 'Already in Cart',
-                    text: 'This item is already in your cart.',
+                    title: 'Updated Cart',
+                    text: 'Item quantity updated in your cart!',
                     background: '#2a2a2a',
                     color: '#fff',
                     confirmButtonColor: '#ff7e3f',
@@ -193,8 +202,8 @@ export async function addToCart(item, email, quantity = 1) {
                 items: arrayUnion(cartItem)
             });
         } else {
-            await setDoc(cartDocRef, {
-                items: [cartItem]
+            await updateDoc(cartDocRef, {
+                items: arrayUnion({ ...existingItem, quantity: existingItem.quantity + quantity })
             });
         }
 

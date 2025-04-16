@@ -1,5 +1,5 @@
 import { db } from "./firebase-config.js";
-import { doc, getDoc, updateDoc, arrayRemove } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 import { createCard } from "../components/productCard.js";
 import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
 
@@ -64,80 +64,147 @@ async function loadCart() {
         if (!docSnap.exists() || !docSnap.data().items || docSnap.data().items.length === 0) {
             cartContainer.innerHTML = "<p class='text-center'>Your cart is empty.</p>";
             console.log("No items found in Firestore or document does not exist.");
+            updateTotalPrice(0); // تحديث إجمالي السعر إلى 0
             return;
         }
 
-        const items = docSnap.data().items;
+        let items = docSnap.data().items;
         console.log("Items in cart:", items);
 
-        const userCart = items.filter(item => item.email === email);
+        let userCart = items.filter(item => item.email === email);
         console.log("Filtered cart for email:", userCart);
 
         if (userCart.length === 0) {
             cartContainer.innerHTML = "<p class='text-center'>Your cart is empty.</p>";
             console.log("No items found for this email.");
+            updateTotalPrice(0); // تحديث إجمالي السعر إلى 0
             return;
         }
 
+        // دالة لتحديث إجمالي السعر ديناميكيًا
+        const updateTotalPrice = (highlight = false) => {
+            const totalPrice = userCart.reduce((total, item) => {
+                const card = cartContainer.querySelector(`[data-name="${item.name}"]`);
+                const quantity = card ? parseInt(card.querySelector(".form-control").value) : item.quantity;
+                return total + (item.price * quantity);
+            }, 0);
+            const totalPriceElement = document.getElementById("totalPrice");
+            if (totalPriceElement) {
+                totalPriceElement.textContent = totalPrice.toFixed(2);
+                if (highlight) {
+                    totalPriceElement.style.transition = "color 0.3s ease";
+                    totalPriceElement.style.color = "#28a745"; // لون أخضر للحظة
+                    setTimeout(() => {
+                        totalPriceElement.style.color = "#ff7e3f"; // رجوع للون الأصلي
+                    }, 500);
+                }
+            }
+        };
+
+        // عرض الكروت مع أزرار ديناميكية
         userCart.forEach((item, index) => {
             console.log("Rendering item:", item);
-            const card = createCard(item.name, item.price, item.image, item.description);
+            const card = createCard(item.name, item.price, item.image, "", item.quantity, () => updateTotalPrice(true));
 
+            // إضافة data-name للكارت عشان نعرف نحدّث الكمية بسهولة
+            card.setAttribute("data-name", item.name);
+
+            // إضافة زرار "Remove"
             const cardBody = card.querySelector(".card-body");
+            const removeBtn = document.createElement("button");
+            removeBtn.className = "btn btn-danger btn-sm mt-2 w-100";
+            removeBtn.textContent = "Remove";
+            removeBtn.addEventListener("click", async () => {
+                userCart = userCart.filter(cartItem => cartItem.name !== item.name);
+                items = items.filter(cartItem => !(cartItem.email === email && cartItem.name === item.name));
+                await setDoc(cartDocRef, { items });
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Item Removed',
+                    text: `${item.name} has been removed from your cart!`,
+                    background: '#2a2a2a',
+                    color: '#fff',
+                    confirmButtonColor: '#ff7e3f',
+                    timer: 1500
+                });
+                loadCart(); // إعادة تحميل السلة
+            });
 
-            // إضافة زرار "Remove from Cart"
-            const removeButton = document.createElement("button");
-            removeButton.className = "remove-btn w-100 mt-2";
-            removeButton.textContent = "Remove from Cart";
-            removeButton.dataset.index = index;
-            removeButton.dataset.email = email;
-
-            cardBody.appendChild(removeButton);
-
+            cardBody.appendChild(removeBtn);
             cartContainer.appendChild(card);
+        });
 
-            removeButton.addEventListener("click", async (e) => {
-                const index = parseInt(e.target.dataset.index);
-                const email = e.target.dataset.email;
+        // تحديث إجمالي السعر لأول مرة
+        updateTotalPrice();
 
-                const docSnap = await getDoc(cartDocRef);
-                const items = docSnap.data().items;
-                const userCart = items.filter(item => item.email === email);
-                const itemToRemove = userCart[index];
-
+        // إضافة وظيفة لزرار "Clear Cart"
+        const clearCartButton = document.getElementById("clearCartBtn");
+        if (clearCartButton) {
+            clearCartButton.addEventListener("click", async () => {
                 try {
-                    await updateDoc(cartDocRef, {
-                        items: arrayRemove(itemToRemove)
-                    });
-
+                    await setDoc(cartDocRef, { items: [] }); // تفريغ السلة
                     Swal.fire({
                         icon: 'success',
-                        title: 'Removed',
-                        text: 'Item removed from cart!',
+                        title: 'Cart Cleared',
+                        text: 'All items have been removed from your cart!',
                         background: '#2a2a2a',
                         color: '#fff',
                         confirmButtonColor: '#ff7e3f',
                         timer: 1500
                     });
-                    loadCart();
+                    loadCart(); // إعادة تحميل السلة
                 } catch (error) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Failed to remove item.',
+                        text: 'Failed to clear cart.',
                         background: '#2a2a2a',
                         color: '#fff',
                         confirmButtonColor: '#ff7e3f'
                     });
                 }
             });
-        });
+        }
 
-        // حساب إجمالي السعر (الكمية دايمًا 1 لأن العنصر مش بيتكرر)
-        const totalPrice = userCart.reduce((total, item) => total + item.price, 0);
-        const totalPriceElement = document.getElementById("totalPrice");
-        if (totalPriceElement) {
-            totalPriceElement.textContent = totalPrice.toFixed(2);
+        // إضافة وظيفة لزرار "Checkout"
+        const checkoutButton = document.getElementById("checkoutBtn");
+        if (checkoutButton) {
+            checkoutButton.addEventListener("click", async () => {
+                if (userCart.length === 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Empty Cart',
+                        text: 'Your cart is empty. Add items to proceed!',
+                        background: '#2a2a2a',
+                        color: '#fff',
+                        confirmButtonColor: '#ff7e3f'
+                    });
+                    return;
+                }
+
+                try {
+                    await setDoc(cartDocRef, { items: [] }); // تفريغ السلة
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Order Placed',
+                        text: 'Thank you for your order! Your cart has been cleared.',
+                        background: '#2a2a2a',
+                        color: '#fff',
+                        confirmButtonColor: '#ff7e3f',
+                        timer: 2000
+                    });
+                    loadCart(); // إعادة تحميل السلة
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to place order.',
+                        background: '#2a2a2a',
+                        color: '#fff',
+                        confirmButtonColor: '#ff7e3f'
+                    });
+                }
+            });
         }
     } catch (error) {
         console.error("Error loading cart:", error);
