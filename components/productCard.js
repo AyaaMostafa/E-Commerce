@@ -1,4 +1,4 @@
-import { saveToFavorites, removeFromFavorites } from './../Script/fetchProducts.js'
+import { saveToFavorites, removeFromFavorites, addToCart } from './../Script/fetchProducts.js';
 
 export function createCard(title, price, image, description = "") {
     const card = document.createElement("div");
@@ -16,21 +16,23 @@ export function createCard(title, price, image, description = "") {
     badge.textContent = "Best Deal";
     cardContent.appendChild(badge);
 
-    // ❤️ Favorite Icon using Bootstrap Icons
-    const favIcon = document.createElement("i");
-    favIcon.className = "bi bi-heart-fill position-absolute top-0 end-0 m-2 text-secondary";
-    favIcon.style.cursor = "pointer";
-    favIcon.style.fontSize = "1.4rem";
-    favIcon.style.zIndex = "10";
-    favIcon.title = "Add to Favorites";
+    // ❤️ Favorite Icon (only if not in favourite.html or cart.html)
+    const isSpecialPage = window.location.pathname.includes("favourite.html") || window.location.pathname.includes("cart.html");
+    let favIcon;
+    if (!isSpecialPage) {
+        favIcon = document.createElement("i");
+        favIcon.className = "bi bi-heart-fill position-absolute top-0 end-0 m-2 text-secondary";
+        favIcon.style.cursor = "pointer";
+        favIcon.style.fontSize = "1.4rem";
+        favIcon.style.zIndex = "10";
+        favIcon.title = "Add to Favorites";
 
-    // Favorite key
-    const favKey = `favorite_${title}`;
-    if (localStorage.getItem(favKey)) {
-        favIcon.classList.add("text-danger", "favorite");
+        // إزالة التحقق من localStorage باستخدام favKey
+        // بدلًا من الاعتماد على localStorage، هنعتمد على Firestore مباشرة
+        // لو عايز تعرف إذا كان المنتج في المفضلة أو لأ، ممكن تضيف استعلام لـ Firestore هنا
+        // لكن حاليًا هنسيب الأيقونة تتغير لونها بناءً على التفاعل فقط
+        cardContent.appendChild(favIcon);
     }
-
-    cardContent.appendChild(favIcon);
 
     // Image
     if (image) {
@@ -107,39 +109,67 @@ export function createCard(title, price, image, description = "") {
     });
 
     // ❤️ Favorite icon click event
-    favIcon.addEventListener("click", async () => {
-        favIcon.classList.toggle("text-danger");
-        favIcon.classList.toggle("favorite");
+    if (!isSpecialPage) {
+        favIcon.addEventListener("click", async () => {
+            favIcon.classList.toggle("text-danger");
+            favIcon.classList.toggle("favorite");
 
-        const cardEl = favIcon.closest(".card");
+            const cardEl = favIcon.closest(".card");
+
+            const name = cardEl.querySelector(".card-title")?.textContent || "";
+            const price = cardEl.querySelector(".card-text.text-danger")?.textContent || "0";
+            const image = cardEl.querySelector("img")?.src || "";
+            const desc = cardEl.querySelector(".card-description")?.textContent || "";
+
+            const favoriteItem = {
+                name: name,
+                price: parseFloat(price.replace("$", "")),
+                image: image,
+                description: desc
+            };
+
+            try {
+                if (favIcon.classList.contains("favorite")) {
+                    // إزالة localStorage.setItem(favKey, "true")
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const email = urlParams.get("email");
+
+                    console.log(email);
+                    await saveToFavorites(favoriteItem, email);
+                } else {
+                    // إزالة localStorage.removeItem(favKey)
+                    await removeFromFavorites(favoriteItem);
+                }
+            } catch (error) {
+                console.error("Favorite toggle error:", error);
+            }
+        });
+    }
+
+    // Add to Cart button click event
+    addToCartBtn.addEventListener("click", async () => {
+        const cardEl = addToCartBtn.closest(".card");
 
         const name = cardEl.querySelector(".card-title")?.textContent || "";
         const price = cardEl.querySelector(".card-text.text-danger")?.textContent || "0";
         const image = cardEl.querySelector("img")?.src || "";
         const desc = cardEl.querySelector(".card-description")?.textContent || "";
+        const quantity = parseInt(quantityInput.value);
 
-        const favoriteItem = {
+        const cartItem = {
             name: name,
             price: parseFloat(price.replace("$", "")),
             image: image,
             description: desc
         };
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const email = urlParams.get("email");
+
         try {
-            if (favIcon.classList.contains("favorite")) {
-                localStorage.setItem(favKey, "true");
-
-                const urlParams = new URLSearchParams(window.location.search);
-                const email = urlParams.get("email");
-
-                console.log(email);
-                await saveToFavorites(favoriteItem, email);
-            } else {
-                localStorage.removeItem(favKey);
-                await removeFromFavorites(favoriteItem);
-            }
+            await addToCart(cartItem, email, quantity);
         } catch (error) {
-            console.error("Favorite toggle error:", error);
+            console.error("Add to cart error:", error);
         }
     });
 

@@ -1,5 +1,12 @@
+/* 
+.body {
+    position: relative;
+} */
 
 
+#content {
+    position: relative;
+}
 
 .nav-item {
     font-size: 1.5rem;

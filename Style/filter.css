@@ -1,121 +1,145 @@
-.filter-sidebar {
-    width: 280px;
-    background-color: #2E2E2E;
-    padding: 20px;
-    color: white;
-    position:fixed;
-    left: 0;
-    top: 70%;
-    transform: translateY(-50%);
+
+
+.filter-card {
+    width: auto; /* or keep 50% if you prefer */
+    background-color: #F5F5F5;
+    padding: 8px 15px;
     z-index: 1000;
-    overflow-y: auto;
-    transition: transform 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     border-radius: 10px;
-   
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: absolute; /* Changed from static to absolute */
+    top: 40rem;
+    margin-bottom: 0;
+    height: auto;
+    /* You might want to add left/right positioning too */
+    left: 0; /* Example - adjust as needed */
+    right: 0; /* Example - adjust as needed */
+    margin-left: auto; /* Helps with centering if width is fixed */
+    margin-right: auto; /* Helps with centering if width is fixed */
 }
+
+.filter-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.filter-container h2 {
+    font-size: 1.2rem;
+    color: #2E2E2E;
+    margin: 0;
+    white-space: nowrap;
+}
+
 .filter-section {
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #444;
-}
-
-.filter-section h3 {
-    color: #F88C5E;
-    font-size: 18px;
-    margin-bottom: 15px;
-}
-
-.filter-option {
-    margin-bottom: 10px;
     display: flex;
     align-items: center;
+    gap: 8px;
 }
 
-.filter-option input[type="checkbox"],
-.filter-option input[type="radio"] {
-    margin-right: 10px;
-    width: 16px;
-    height: 16px;
+.filter-section h4 {
+    font-size: 1rem;
+    color: #3B3B3B;
+    margin: 0;
+    white-space: nowrap;
 }
 
-.filter-option label {
-    color: white;
-    cursor: pointer;
-    font-size: 15px;
+.filter-section input[type="range"] {
+    width: 120px;
+    accent-color: #F88C5E;
+    margin: 0;
+}
+
+#priceValue {
+    font-size: 0.9rem;
+    color: #3B3B3B;
+    white-space: nowrap;
 }
 
 .filter-actions {
-    margin-top: 25px;
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
+/* Button Styles - Integrated with your color palette */
+.filter-btn {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+/* Primary Filter Button - Soft Coral */
 .filter-btn {
     background-color: #F88C5E;
-    border: none;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s;
+    color: #FFFFFF;
+    box-shadow: 0 1px 3px rgba(248, 140, 94, 0.3);
 }
 
 .filter-btn:hover {
     background-color: #FF7F50;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(248, 140, 94, 0.4);
 }
 
+.filter-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(248, 140, 94, 0.3);
+}
+
+/* Secondary Filter Button - Muted Blue-Gray */
 .filter-btn.secondary {
-    background-color: #444;
+    background-color: #D3D8DE;
+    color: #2E2E2E;
+    border: 1px solid #A9B0B8;
+    box-shadow: none;
 }
 
 .filter-btn.secondary:hover {
-    background-color: #555;
+    background-color: #C1C8D0;
+    border-color: #8E99A4;
 }
 
-.filter-toggle {
-    display: none;
-    background-color: #F88C5E;
-    border: none;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 5px;
+/* Organic Filter Button - Sage Green (for optional use) */
+.filter-btn.organic {
+    background-color: #A3B18A;
+    color: #FFFFFF;
+    box-shadow: 0 1px 3px rgba(163, 177, 138, 0.3);
+}
+
+.filter-btn.organic:hover {
+    background-color: #88A27E;
+}
+
+/* Button States */
+.filter-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+/* Add this to your existing CSS */
+.filter-dropdown {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    border: 1px solid #A9B0B8;
+    background-color: white;
+    color: #2E2E2E;
     cursor: pointer;
-    position: fixed;
-    top: 80px;
-    left: 10px;
-    z-index: 1001;
+    transition: all 0.2s ease;
 }
 
-
-@media (max-width: 992px) {
-    .filter-sidebar {
-        transform: translateX(-100%);
-        height: calc(100vh - 60px);
-        top: 60px;
-    }
-    
-    .filter-sidebar.active {
-        transform: translateX(0);
-    }
-    
-    .filter-toggle {
-        display: block;
-    }
+.filter-dropdown:hover {
+    border-color: #8E99A4;
 }
 
-.main-content {
-    margin-left: 280px;
-    padding: 20px;
-    transition: margin-left 0.3s ease;
-}
-
-@media (max-width: 992px) {
-    .main-content {
-        margin-left: 0;
-    }
+.filter-dropdown:focus {
+    outline: none;
+    border-color: #F88C5E;
+    box-shadow: 0 0 0 2px rgba(248, 140, 94, 0.3);
 }
