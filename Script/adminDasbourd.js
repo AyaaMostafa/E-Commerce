@@ -1,101 +1,103 @@
-import { db } from "../../Script/firebase-config.js";
-import { collection, getDocs, setDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
- 
-// Function to display success/error messages
-function displaySuccessMessage(message) {
-    Swal.fire({ icon: 'success', title: 'Success', text: message, background: '#2a2a2a', color: '#fff', confirmButtonColor: '#ff7e3f' });
-}
- 
-function displayErrorMessage(message) {
-    Swal.fire({ icon: 'error', title: 'Error', text: message, background: '#2a2a2a', color: '#fff', confirmButtonColor: '#ff7e3f' });
-}
- 
-// Check if user is admin on page load
-document.addEventListener("DOMContentLoaded", () => {
-    const user = JSON.parse(localStorage.getItem("currentUser"));
-    console.log("Current User:", user); // Debugging
-    if (!user || user.accountType !== "admin") {
-        displayErrorMessage("Unauthorized access!");
-        setTimeout(() => window.location.href = "../../index.html", 1500);
-    }
-});
- 
-// Logout function
-window.logout = function() {
-    localStorage.removeItem("currentUser");
-    displaySuccessMessage("Logged out successfully!");
-    setTimeout(() => {
-        window.location.href = "../../index.html";
-    }, 1500);
+import { db } from './firebase-config.js';
+import { collection, getDocs, doc, updateDoc } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js';
+import Swal from 'https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm';
+
+const allOrdersList = document.getElementById('allOrdersList');
+const adminMessage = document.getElementById('adminMessage');
+
+/**
+ * @param {string} type - 'success', 'error', or 'warning'
+ * @param {string} title - The title of the message
+ * @param {string} message - The message to display
+ */
+const showMessage = (type, title, message) => {
+    Swal.fire({
+        icon: type,
+        title,
+        text: message,
+        background: '#2a2a2a',
+        color: '#fff',
+        confirmButtonColor: '#ff7e3f',
+        timer: type === 'success' ? 1500 : undefined,
+    });
 };
- 
-// --- Add Admin ---
-const addAdminForm = document.getElementById("addAdminForm");
- 
-addAdminForm.onsubmit = async function(event) {
-    event.preventDefault();
-    console.log("Add Admin Form Submitted"); // Debugging
- 
-    const name = document.getElementById("adminName").value.trim();
-    const email = document.getElementById("adminEmail").value.trim();
-    const password = document.getElementById("adminPassword").value;
-    const phone = document.getElementById("adminPhone").value.trim();
-    const location = document.getElementById("adminLocation").value.trim();
- 
-    console.log("Form Data:", { name, email, password, phone, location }); // Debugging
- 
-    // Validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        console.log("Validation Failed: Invalid email"); // Debugging
-        return displayErrorMessage("Please enter a valid email address.");
-    }
-    if (!password || password.length < 6) {
-        console.log("Validation Failed: Password too short"); // Debugging
-        return displayErrorMessage("Password must be at least 6 characters long.");
-    }
-    if (!name || name.length < 3) {
-        console.log("Validation Failed: Name too short"); // Debugging
-        return displayErrorMessage("Full name must be at least 3 characters long.");
-    }
-    const phoneRegex = /^\d{10,15}$/;
-    if (!phone || !phoneRegex.test(phone)) {
-        console.log("Validation Failed: Invalid phone number"); // Debugging
-        return displayErrorMessage("Please enter a valid phone number (10-15 digits).");
-    }
-    if (!location || location.length < 3) {
-        console.log("Validation Failed: Location too short"); // Debugging
-        return displayErrorMessage("Location must be at least 3 characters long.");
-    }
- 
+
+/**
+ * Logs out the user and redirects to the home page.
+ */
+window.logout = function () {
+    localStorage.removeItem('currentUser');
+    showMessage('success', 'Logged Out', 'Logged out successfully!');
+    setTimeout(() => (window.location.href = '/index.html'), 1500);
+};
+
+/**
+ * Loads and displays all orders from Firestore.
+ */
+async function loadAllOrders() {
     try {
-        console.log("Encrypting Password..."); // Debugging
-        const encryptedPassword = CryptoJS.SHA256(password).toString();
-        const emailKey = email.toLowerCase().replace(/\./g, "_");
-        console.log("Encrypted Password:", encryptedPassword); // Debugging
-        console.log("Email Key:", emailKey); // Debugging
- 
-        // Check if email already exists
-        console.log("Checking if email exists..."); // Debugging
-        const usersRef = collection(db, "users");
-        const userQuery = query(usersRef, where("email", "==", email));
-        const userSnapshot = await getDocs(userQuery);
- 
-        if (!userSnapshot.empty) {
-            console.log("Email already registered"); // Debugging
-            return displayErrorMessage("Email already registered.");
+        const ordersSnapshot = await getDocs(collection(db, 'orders'));
+        allOrdersList.innerHTML = '';
+
+        if (ordersSnapshot.empty) {
+            allOrdersList.innerHTML = "<p class='text-center'>No orders found.</p>";
+            return;
         }
- 
-        // Add new admin to Firestore
-        console.log("Adding new admin to Firestore..."); // Debugging
-        const userData = { name, email, password: encryptedPassword, phone, location, accountType: "admin" };
-        await setDoc(doc(db, "users", emailKey), userData);
- 
-        console.log("Admin added successfully"); // Debugging
-        displaySuccessMessage("Admin added successfully!");
-        addAdminForm.reset();
+
+        ordersSnapshot.forEach((docSnap) => {
+            const order = docSnap.data();
+            const orderId = docSnap.id;
+            const orderElement = document.createElement('div');
+            orderElement.className = 'order-item';
+            // Check if status exists, default to 'Unknown' if undefined
+            const status = order.status ? order.status : 'Unknown';
+            orderElement.innerHTML = `
+                <h5>Order ID: ${orderId}</h5>
+                <p>User Email: ${order.userEmail || 'N/A'}</p>
+                <p>Total Price: $${order.totalPrice || 0}</p>
+                <p>Status: <span class="status-${status.toLowerCase()}">${status}</span></p>
+                <p>Timestamp: ${order.timestamp || 'N/A'}</p>
+                ${order.description ? `<p>Description: ${order.description.map(item => item.email || item.description || 'N/A').join(', ')}</p>` : ''}
+            `;
+
+            // Status Dropdown
+            const statusSelect = document.createElement('select');
+            statusSelect.className = 'form-select mb-2';
+            ['Pending', 'Accepted', 'Rejected'].forEach(statusOption => {
+                const option = document.createElement('option');
+                option.value = statusOption;
+                option.textContent = statusOption;
+                if (statusOption === status) option.selected = true;
+                statusSelect.appendChild(option);
+            });
+
+            statusSelect.addEventListener('change', async () => {
+                try {
+                    await updateDoc(doc(db, 'orders', orderId), { status: statusSelect.value });
+                    showMessage('success', 'Status Updated', `Order ${orderId} status updated to ${statusSelect.value}!`);
+                    loadAllOrders();
+                } catch (error) {
+                    showMessage('error', 'Error', 'Failed to update status.');
+                }
+            });
+
+            orderElement.appendChild(statusSelect);
+            allOrdersList.appendChild(orderElement);
+        });
     } catch (error) {
-        console.error("Error adding admin:", error); // Debugging
-        displayErrorMessage(`Failed to add admin: ${error.message}`);
+        console.error('Error loading orders:', error.message);
+        allOrdersList.innerHTML = "<p class='text-center'>Error loading orders. Please try again later.</p>";
     }
-};
+}
+
+// Check if the user is an admin on page load
+document.addEventListener('DOMContentLoaded', () => {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (!user || user.accountType !== 'admin') {
+        showMessage('error', 'Unauthorized Access', 'You do not have permission to access this page.');
+        setTimeout(() => (window.location.href = '/index.html'), 1500);
+        return;
+    }
+    adminMessage.textContent = `Welcome, ${user.name}! You are logged in as Admin.`;
+    loadAllOrders();
+});

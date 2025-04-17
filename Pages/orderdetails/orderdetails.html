@@ -11,7 +11,7 @@
         connect-src 'self' https://firestore.googleapis.com;
         img-src 'self' data: https://images.unsplash.com https://www.chefspencil.com https://www.tasteofhome.com https://*.mm.bing.net;
     ">
-    <title>Cart - ATAM</title>
+    <title>Order Status - ATAM</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
@@ -20,8 +20,11 @@
         body {
             background-color: #f4f4f9;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
+        /* Header Section */
         .header-section {
             position: relative;
             background: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836') no-repeat center center;
@@ -56,81 +59,70 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
-        .card {
+        /* User Message */
+        #userMessage {
+            font-size: 1.2rem;
+            font-weight: 500;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Orders List Section */
+        #ordersList {
+            margin-bottom: 40px;
+        }
+
+        .order-item {
             background: linear-gradient(135deg, #ffffff, #f8f9fa);
             border: none;
             border-radius: 15px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            overflow: hidden;
         }
 
-        .card:hover {
+        .order-item:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
-        .card-img-top {
-            height: 200px;
-            object-fit: cover;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
-        }
-
-        .card-body {
-            padding: 20px;
-            text-align: center;
-        }
-
-        .card-title {
-            font-size: 1.3rem;
+        .order-item h5 {
+            font-size: 1.4rem;
             font-weight: 600;
             color: #333;
-            margin-bottom: 10px;
-        }
-
-        .card-text {
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: #ff7e3f;
             margin-bottom: 15px;
         }
 
-        .input-group {
-            margin-bottom: 15px !important;
+        .order-item-detail {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 10px;
+            padding-left: 15px;
+            border-left: 3px solid #ff7e3f;
         }
 
-        .btn-sm {
-            padding: 8px 15px;
-            font-size: 0.9rem;
+        .status-pending { color: #ffc107; font-weight: 500; }
+        .status-accepted { color: #28a745; font-weight: 500; }
+        .status-rejected { color: #dc3545; font-weight: 500; }
+        .status-unknown { color: #6c757d; font-weight: 500; }
+
+        .order-item p {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 8px;
         }
 
-        .total-price-section {
-            margin-top: 40px;
-            padding: 25px;
-            background: linear-gradient(135deg, #2a2a2a, #3a3a3a);
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        /* Buttons */
+        .btn-section {
             display: flex;
             justify-content: center;
-            align-items: center;
-            gap: 20px;
-            color: white;
+            gap: 15px;
+            margin-top: 30px;
         }
 
-        .total-price-section h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin: 0;
-        }
-
-        .total-price-section span {
-            color: #ff7e3f;
-        }
-
-        .clear-cart-btn, .checkout-btn, .order-status-btn {
+        .btn-secondary, .btn-danger {
             padding: 12px 25px;
-            border: none;
             border-radius: 8px;
             font-size: 1rem;
             font-weight: 500;
@@ -140,80 +132,44 @@
             gap: 8px;
         }
 
-        .clear-cart-btn {
-            background-color: #ff4d4d;
-            color: white;
+        .btn-secondary {
+            background-color: #6c757d;
         }
 
-        .clear-cart-btn:hover {
-            background-color: #e60000;
+        .btn-secondary:hover {
+            background-color: #5a6268;
             transform: scale(1.05);
         }
 
-        .checkout-btn {
-            background-color: #28a745;
-            color: white;
+        .btn-danger {
+            background-color: #dc3545;
         }
 
-        .checkout-btn:hover {
-            background-color: #218838;
+        .btn-danger:hover {
+            background-color: #c82333;
             transform: scale(1.05);
         }
 
-        .order-status-btn {
-            background-color: #17a2b8;
-            color: white;
-        }
-
-        .order-status-btn:hover {
-            background-color: #138496;
-            transform: scale(1.05);
-        }
-
-        .home-btn, .favorites-btn {
-            position: absolute;
-            top: 20px;
-            background-color: #ff7e3f;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1rem;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .home-btn {
-            left: 20px;
-        }
-
-        .favorites-btn {
-            right: 20px;
-        }
-
-        .home-btn:hover, .favorites-btn:hover {
-            background-color: #e66b2f;
-            transform: scale(1.05);
-        }
-
+        /* Responsive Design */
         @media (max-width: 576px) {
             .header-section h2 {
                 font-size: 2rem;
             }
 
-            .card-img-top {
-                height: 150px;
+            .order-item {
+                padding: 15px;
             }
 
-            .total-price-section {
+            .order-item h5 {
+                font-size: 1.2rem;
+            }
+
+            .btn-section {
                 flex-direction: column;
-                gap: 15px;
+                gap: 10px;
             }
 
-            .clear-cart-btn, .checkout-btn, .order-status-btn {
+            .btn-secondary, .btn-danger {
                 width: 100%;
                 justify-content: center;
             }
@@ -221,27 +177,29 @@
     </style>
 </head>
 <body>
+    <!-- Header Section -->
     <div class="header-section">
-        <h2>Your Cart</h2>
+        <h2>Your Orders</h2>
     </div>
 
-    <div class="container mb-5">
-        <div class="row g-4" id="cartProducts"></div>
-        <div class="total-price-section">
-            <h3>Total Price: $<span id="totalPrice">0</span></h3>
-            <button id="clearCartBtn" class="clear-cart-btn">
-                <i class="bi bi-trash"></i> Clear Cart
-            </button>
-            <button id="checkoutBtn" class="checkout-btn">
-                <i class="bi bi-cart-check"></i> Checkout
-            </button>
-            <button id="orderStatusBtn" class="order-status-btn">
-                <i class="bi bi-info-circle"></i> Order Status
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <p id="userMessage" class="text-success"></p>
+        
+        <!-- Orders List Section -->
+        <div id="ordersList" class="mb-4"></div>
+
+        <!-- Buttons Section -->
+        <div class="btn-section">
+            <a href="/index.html" class="btn btn-secondary">
+                <i class="bi bi-house-door"></i> Back to Home
+            </a>
+            <button id="logoutBtn" class="btn btn-danger" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i> Logout
             </button>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="/Script/cart.js"></script>
+    <script type="module" src="/Script/orderdetails.js"></script>
 </body>
 </html>
