@@ -1,3 +1,7 @@
+<div class="container mt-5">
+    <h2 class="mb-4">Cake Menu</h2>
+    <div class="row g-4" id="products"></div>
+</div>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -128,7 +132,7 @@
             color: #ff7e3f;
         }
 
-        .clear-cart-btn, .checkout-btn {
+        .clear-cart-btn, .checkout-btn, .order-status-btn {
             padding: 12px 25px;
             border: none;
             border-radius: 8px;
@@ -157,6 +161,16 @@
 
         .checkout-btn:hover {
             background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        .order-status-btn {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .order-status-btn:hover {
+            background-color: #138496;
             transform: scale(1.05);
         }
 
@@ -203,7 +217,7 @@
                 gap: 15px;
             }
 
-            .clear-cart-btn, .checkout-btn {
+            .clear-cart-btn, .checkout-btn, .order-status-btn {
                 width: 100%;
                 justify-content: center;
             }
@@ -211,13 +225,6 @@
     </style>
 </head>
 <body>
-    <a href="/app/app.html?page=home" class="home-btn">
-        <i class="bi bi-house-door"></i> Home
-    </a>
-    <a href="/Pages/favourite.html" class="favorites-btn">
-        <i class="bi bi-heart-fill"></i> Favorites
-    </a>
-
     <div class="header-section">
         <h2>Your Cart</h2>
     </div>
@@ -231,6 +238,9 @@
             </button>
             <button id="checkoutBtn" class="checkout-btn">
                 <i class="bi bi-cart-check"></i> Checkout
+            </button>
+            <button id="orderStatusBtn" class="order-status-btn">
+                <i class="bi bi-info-circle"></i> Order Status
             </button>
         </div>
     </div>

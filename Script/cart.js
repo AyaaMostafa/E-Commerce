@@ -1,29 +1,68 @@
-import { db } from "./firebase-config.js";
-import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
-import { createCard } from "../components/productCard.js";
-import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
+// Import Firestore database and functions
+import { db } from './firebase-config.js';
+import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js';
+import { createCard } from '../components/productCard.js';
+import Swal from 'https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm';
 
-// دالة لتحميل المنتجات من السلة
+// Constants
+const CART_CONTAINER_ID = 'cartProducts';
+const TOTAL_PRICE_ID = 'totalPrice';
+const CLEAR_CART_BTN_ID = 'clearCartBtn';
+const CHECKOUT_BTN_ID = 'checkoutBtn';
+const ORDER_STATUS_BTN_ID = 'orderStatusBtn';
+const CART_ICON_ID = 'cart-icon';
+const HIGHLIGHT_COLOR = '#28a745';
+const DEFAULT_COLOR = '#ff7e3f';
+const TRANSITION_DURATION = 500; // ms
+
+/**
+ * Updates the total price dynamically with optional highlight effect.
+ * @param {boolean} highlight - Whether to apply a highlight effect.
+ * @param {Array} userCart - Array of cart items.
+ * @param {HTMLElement} cartContainer - The cart container element.
+ */
+const updateTotalPrice = (highlight = false, userCart, cartContainer) => {
+    const totalPrice = userCart.reduce((total, item) => {
+        const card = cartContainer.querySelector(`[data-name="${item.name}"]`);
+        const quantity = card ? parseInt(card.querySelector('.form-control').value, 10) : item.quantity;
+        return total + (item.price * (quantity || 0));
+    }, 0);
+
+    const totalPriceElement = document.getElementById(TOTAL_PRICE_ID);
+    if (totalPriceElement) {
+        totalPriceElement.textContent = totalPrice.toFixed(2);
+        if (highlight) {
+            totalPriceElement.style.transition = `color ${TRANSITION_DURATION / 1000}s ease`;
+            totalPriceElement.style.color = HIGHLIGHT_COLOR;
+            setTimeout(() => {
+                totalPriceElement.style.color = DEFAULT_COLOR;
+            }, TRANSITION_DURATION);
+        }
+    }
+};
+
+/**
+ * Loads and renders the cart items from Firestore.
+ * @returns {Promise<void>}
+ */
 async function loadCart() {
-    const cartContainer = document.getElementById("cartProducts");
-    cartContainer.innerHTML = "";
+    const cartContainer = document.getElementById(CART_CONTAINER_ID);
+    if (!cartContainer) return;
+
+    cartContainer.innerHTML = '';
 
     try {
         const urlParams = new URLSearchParams(window.location.search);
-        let email = urlParams.get("email");
-        email = decodeURIComponent(email);
-        console.log("Decoded email from URL:", email);
+        let email = decodeURIComponent(urlParams.get('email') || '');
 
         if (!email) {
             const referrerParams = new URLSearchParams(new URL(document.referrer).search);
-            email = referrerParams.get("email");
+            email = decodeURIComponent(referrerParams.get('email') || '');
             if (email) {
                 const newUrl = `/Pages/cart.html?email=${encodeURIComponent(email)}`;
-                window.history.replaceState({}, '', newUrl);
+                window.history.replaceState({}, document.title, newUrl);
             }
         }
-
-        console.log("Final email after referrer check:", email);
 
         if (!email) {
             cartContainer.innerHTML = "<p class='text-center'>Please log in to view your cart.</p>";
@@ -34,90 +73,46 @@ async function loadCart() {
                 background: '#2a2a2a',
                 color: '#fff',
                 confirmButtonColor: '#ff7e3f',
-                timer: 3000
+                timer: 3000,
             }).then(() => {
-                window.location.href = "/index.html";
+                window.location.href = '/index.html';
             });
             return;
         }
 
-        // إضافة الـ email لزرار Home ديناميكيًا
-        const homeButton = document.querySelector(".home-btn");
-        if (homeButton) {
-            homeButton.href = `/app/app.html?page=home&email=${encodeURIComponent(email)}`;
-        }
-
-        // إضافة الـ email لزرار Favorites ديناميكيًا
-        const favoritesButton = document.querySelector(".favorites-btn");
-        if (favoritesButton) {
-            favoritesButton.href = `/Pages/favourite.html?email=${encodeURIComponent(email)}`;
-        }
-
-        const cartDocRef = doc(db, "cart", "cart");
+        const cartDocRef = doc(db, 'cart', 'cart');
         const docSnap = await getDoc(cartDocRef);
-
-        console.log("Firestore doc exists:", docSnap.exists());
-        if (docSnap.exists()) {
-            console.log("Firestore data:", docSnap.data());
-        }
 
         if (!docSnap.exists() || !docSnap.data().items || docSnap.data().items.length === 0) {
             cartContainer.innerHTML = "<p class='text-center'>Your cart is empty.</p>";
-            console.log("No items found in Firestore or document does not exist.");
-            updateTotalPrice(0); // تحديث إجمالي السعر إلى 0
+            updateTotalPrice(false, [], cartContainer);
             return;
         }
 
-        let items = docSnap.data().items;
-        console.log("Items in cart:", items);
-
-        let userCart = items.filter(item => item.email === email);
-        console.log("Filtered cart for email:", userCart);
+        const { items } = docSnap.data();
+        const userCart = items.filter(item => item.email === email);
 
         if (userCart.length === 0) {
             cartContainer.innerHTML = "<p class='text-center'>Your cart is empty.</p>";
-            console.log("No items found for this email.");
-            updateTotalPrice(0); // تحديث إجمالي السعر إلى 0
+            updateTotalPrice(false, [], cartContainer);
             return;
         }
 
-        // دالة لتحديث إجمالي السعر ديناميكيًا
-        const updateTotalPrice = (highlight = false) => {
-            const totalPrice = userCart.reduce((total, item) => {
-                const card = cartContainer.querySelector(`[data-name="${item.name}"]`);
-                const quantity = card ? parseInt(card.querySelector(".form-control").value) : item.quantity;
-                return total + (item.price * quantity);
-            }, 0);
-            const totalPriceElement = document.getElementById("totalPrice");
-            if (totalPriceElement) {
-                totalPriceElement.textContent = totalPrice.toFixed(2);
-                if (highlight) {
-                    totalPriceElement.style.transition = "color 0.3s ease";
-                    totalPriceElement.style.color = "#28a745"; // لون أخضر للحظة
-                    setTimeout(() => {
-                        totalPriceElement.style.color = "#ff7e3f"; // رجوع للون الأصلي
-                    }, 500);
-                }
-            }
-        };
+        // Render cart items
+        userCart.forEach((item) => {
+            const card = createCard(item.name, item.price, item.image, '', item.quantity, () =>
+                updateTotalPrice(true, userCart, cartContainer)
+            );
+            card.setAttribute('data-name', item.name);
 
-        // عرض الكروت مع أزرار ديناميكية
-        userCart.forEach((item, index) => {
-            console.log("Rendering item:", item);
-            const card = createCard(item.name, item.price, item.image, "", item.quantity, () => updateTotalPrice(true));
-
-            // إضافة data-name للكارت عشان نعرف نحدّث الكمية بسهولة
-            card.setAttribute("data-name", item.name);
-
-            // إضافة زرار "Remove"
-            const cardBody = card.querySelector(".card-body");
-            const removeBtn = document.createElement("button");
-            removeBtn.className = "btn btn-danger btn-sm mt-2 w-100";
-            removeBtn.textContent = "Remove";
-            removeBtn.addEventListener("click", async () => {
-                userCart = userCart.filter(cartItem => cartItem.name !== item.name);
-                items = items.filter(cartItem => !(cartItem.email === email && cartItem.name === item.name));
-                await setDoc(cartDocRef, { items });
+            const cardBody = card.querySelector('.card-body');
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'btn btn-danger btn-sm mt-2 w-100';
+            removeBtn.textContent = 'Remove';
+            removeBtn.addEventListener('click', async () => {
+                const updatedUserCart = userCart.filter(cartItem => cartItem.name !== item.name);
+                const updatedItems = items.filter(cartItem => !(cartItem.email === email && cartItem.name === item.name));
+                await setDoc(cartDocRef, { items: updatedItems });
                 Swal.fire({
                     icon: 'success',
                     title: 'Item Removed',
@@ -125,24 +120,23 @@ async function loadCart() {
                     background: '#2a2a2a',
                     color: '#fff',
                     confirmButtonColor: '#ff7e3f',
-                    timer: 1500
+                    timer: 1500,
                 });
-                loadCart(); // إعادة تحميل السلة
+                loadCart();
             });
 
             cardBody.appendChild(removeBtn);
             cartContainer.appendChild(card);
         });
 
-        // تحديث إجمالي السعر لأول مرة
-        updateTotalPrice();
+        updateTotalPrice(false, userCart, cartContainer);
 
-        // إضافة وظيفة لزرار "Clear Cart"
-        const clearCartButton = document.getElementById("clearCartBtn");
+        // Clear Cart functionality
+        const clearCartButton = document.getElementById(CLEAR_CART_BTN_ID);
         if (clearCartButton) {
-            clearCartButton.addEventListener("click", async () => {
+            clearCartButton.addEventListener('click', async () => {
                 try {
-                    await setDoc(cartDocRef, { items: [] }); // تفريغ السلة
+                    await setDoc(cartDocRef, { items: [] });
                     Swal.fire({
                         icon: 'success',
                         title: 'Cart Cleared',
@@ -150,9 +144,9 @@ async function loadCart() {
                         background: '#2a2a2a',
                         color: '#fff',
                         confirmButtonColor: '#ff7e3f',
-                        timer: 1500
+                        timer: 1500,
                     });
-                    loadCart(); // إعادة تحميل السلة
+                    loadCart();
                 } catch (error) {
                     Swal.fire({
                         icon: 'error',
@@ -160,16 +154,16 @@ async function loadCart() {
                         text: 'Failed to clear cart.',
                         background: '#2a2a2a',
                         color: '#fff',
-                        confirmButtonColor: '#ff7e3f'
+                        confirmButtonColor: '#ff7e3f',
                     });
                 }
             });
         }
 
-        // إضافة وظيفة لزرار "Checkout"
-        const checkoutButton = document.getElementById("checkoutBtn");
+        // Checkout functionality
+        const checkoutButton = document.getElementById(CHECKOUT_BTN_ID);
         if (checkoutButton) {
-            checkoutButton.addEventListener("click", async () => {
+            checkoutButton.addEventListener('click', async () => {
                 if (userCart.length === 0) {
                     Swal.fire({
                         icon: 'warning',
@@ -177,23 +171,22 @@ async function loadCart() {
                         text: 'Your cart is empty. Add items to proceed!',
                         background: '#2a2a2a',
                         color: '#fff',
-                        confirmButtonColor: '#ff7e3f'
+                        confirmButtonColor: '#ff7e3f',
                     });
                     return;
                 }
 
                 try {
-                    await setDoc(cartDocRef, { items: [] }); // تفريغ السلة
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Order Placed',
-                        text: 'Thank you for your order! Your cart has been cleared.',
-                        background: '#2a2a2a',
-                        color: '#fff',
-                        confirmButtonColor: '#ff7e3f',
-                        timer: 2000
+                    const orderId = Date.now().toString();
+                    await setDoc(doc(db, 'orders', orderId), {
+                        userEmail: email,
+                        items: userCart.map(({ name, price, quantity }) => ({ name, price, quantity })),
+                        status: 'pending',
+                        totalPrice: userCart.reduce((sum, { price, quantity }) => sum + price * quantity, 0).toFixed(2),
+                        timestamp: new Date().toISOString(),
                     });
-                    loadCart(); // إعادة تحميل السلة
+                    await setDoc(cartDocRef, { items: [] });
+                    window.location.href = `/Pages/orderdetails/orderdetails.html?orderId=${orderId}&email=${encodeURIComponent(email)}`;
                 } catch (error) {
                     Swal.fire({
                         icon: 'error',
@@ -201,28 +194,35 @@ async function loadCart() {
                         text: 'Failed to place order.',
                         background: '#2a2a2a',
                         color: '#fff',
-                        confirmButtonColor: '#ff7e3f'
+                        confirmButtonColor: '#ff7e3f',
                     });
                 }
             });
         }
+
+        // Order Status functionality
+        const orderStatusButton = document.getElementById(ORDER_STATUS_BTN_ID);
+        if (orderStatusButton) {
+            orderStatusButton.addEventListener('click', () => {
+                window.location.href = `/Pages/orderdetails/orderdetails.html?email=${encodeURIComponent(email)}`;
+            });
+        }
     } catch (error) {
-        console.error("Error loading cart:", error);
+        console.error('Error loading cart:', error.message);
         cartContainer.innerHTML = "<p class='text-center'>Error loading cart. Please try again later.</p>";
     }
 }
 
-// إضافة event listener لأيقونة السلة
-document.addEventListener("DOMContentLoaded", () => {
+// Initialize cart and event listeners
+document.addEventListener('DOMContentLoaded', () => {
     loadCart();
 
-    // التحقق من وجود أيقونة السلة والتعامل مع الضغط عليها
-    document.body.addEventListener("click", function (e) {
-        if (e.target.id === "cart-icon" || e.target.closest("#cart-icon")) {
+    document.body.addEventListener('click', (e) => {
+        if (e.target.id === CART_ICON_ID || e.target.closest(`#${CART_ICON_ID}`)) {
             const urlParams = new URLSearchParams(window.location.search);
-            const email = urlParams.get("email");
-            console.log("Cart icon clicked, email:", email);
-            window.location.href = `/Pages/cart.html?email=${email}`;
+            const email = urlParams.get('email');
+            console.log('Cart icon clicked, email:', email);
+            window.location.href = `../Pages/cart/cart.html?email=${email}`;
         }
     });
 });
