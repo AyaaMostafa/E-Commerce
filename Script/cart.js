@@ -1,10 +1,8 @@
-// Import Firestore database and functions
 import { db } from './firebase-config.js';
 import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js';
 import { createCard } from '../components/productCard.js';
 import Swal from 'https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm';
 
-// Constants
 const CART_CONTAINER_ID = 'cartProducts';
 const TOTAL_PRICE_ID = 'totalPrice';
 const CLEAR_CART_BTN_ID = 'clearCartBtn';
@@ -13,15 +11,9 @@ const ORDER_STATUS_BTN_ID = 'orderStatusBtn';
 const CART_ICON_ID = 'cart-icon';
 const HIGHLIGHT_COLOR = '#28a745';
 const DEFAULT_COLOR = '#ff7e3f';
-const TRANSITION_DURATION = 500; // ms
+const TRANSITION_DURATION = 500;
 
-/**
- * Updates the total price dynamically with optional highlight effect.
- * @param {boolean} highlight - Whether to apply a highlight effect.
- * @param {Array} userCart - Array of cart items.
- * @param {HTMLElement} cartContainer - The cart container element.
- */
-const updateTotalPrice = (highlight = false, userCart, cartContainer) => {
+const updateTotalPrice = (highlight, userCart, cartContainer) => {
     const totalPrice = userCart.reduce((total, item) => {
         const card = cartContainer.querySelector(`[data-name="${item.name}"]`);
         const quantity = card ? parseInt(card.querySelector('.form-control').value, 10) : item.quantity;
@@ -34,17 +26,11 @@ const updateTotalPrice = (highlight = false, userCart, cartContainer) => {
         if (highlight) {
             totalPriceElement.style.transition = `color ${TRANSITION_DURATION / 1000}s ease`;
             totalPriceElement.style.color = HIGHLIGHT_COLOR;
-            setTimeout(() => {
-                totalPriceElement.style.color = DEFAULT_COLOR;
-            }, TRANSITION_DURATION);
+            setTimeout(() => totalPriceElement.style.color = DEFAULT_COLOR, TRANSITION_DURATION);
         }
     }
 };
 
-/**
- * Loads and renders the cart items from Firestore.
- * @returns {Promise<void>}
- */
 async function loadCart() {
     const cartContainer = document.getElementById(CART_CONTAINER_ID);
     if (!cartContainer) return;
@@ -74,9 +60,7 @@ async function loadCart() {
                 color: '#fff',
                 confirmButtonColor: '#ff7e3f',
                 timer: 3000,
-            }).then(() => {
-                window.location.href = '/index.html';
-            });
+            }).then(() => window.location.href = '/index.html');
             return;
         }
 
@@ -98,7 +82,6 @@ async function loadCart() {
             return;
         }
 
-        // Render cart items
         userCart.forEach((item) => {
             const card = createCard(item.name, item.price, item.image, '', item.quantity, () =>
                 updateTotalPrice(true, userCart, cartContainer)
@@ -131,7 +114,6 @@ async function loadCart() {
 
         updateTotalPrice(false, userCart, cartContainer);
 
-        // Clear Cart functionality
         const clearCartButton = document.getElementById(CLEAR_CART_BTN_ID);
         if (clearCartButton) {
             clearCartButton.addEventListener('click', async () => {
@@ -160,10 +142,9 @@ async function loadCart() {
             });
         }
 
-        // Checkout functionality
         const checkoutButton = document.getElementById(CHECKOUT_BTN_ID);
         if (checkoutButton) {
-            checkoutButton.addEventListener('click', async () => {
+            checkoutButton.addEventListener('click', () => {
                 if (userCart.length === 0) {
                     Swal.fire({
                         icon: 'warning',
@@ -175,32 +156,10 @@ async function loadCart() {
                     });
                     return;
                 }
-
-                try {
-                    const orderId = Date.now().toString();
-                    await setDoc(doc(db, 'orders', orderId), {
-                        userEmail: email,
-                        items: userCart.map(({ name, price, quantity }) => ({ name, price, quantity })),
-                        status: 'pending',
-                        totalPrice: userCart.reduce((sum, { price, quantity }) => sum + price * quantity, 0).toFixed(2),
-                        timestamp: new Date().toISOString(),
-                    });
-                    await setDoc(cartDocRef, { items: [] });
-                    window.location.href = `/Pages/orderdetails/orderdetails.html?orderId=${orderId}&email=${encodeURIComponent(email)}`;
-                } catch (error) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Failed to place order.',
-                        background: '#2a2a2a',
-                        color: '#fff',
-                        confirmButtonColor: '#ff7e3f',
-                    });
-                }
+                window.location.href = `/Pages/checkout/checkout.html?email=${encodeURIComponent(email)}`;
             });
         }
 
-        // Order Status functionality
         const orderStatusButton = document.getElementById(ORDER_STATUS_BTN_ID);
         if (orderStatusButton) {
             orderStatusButton.addEventListener('click', () => {
@@ -208,12 +167,10 @@ async function loadCart() {
             });
         }
     } catch (error) {
-        console.error('Error loading cart:', error.message);
         cartContainer.innerHTML = "<p class='text-center'>Error loading cart. Please try again later.</p>";
     }
 }
 
-// Initialize cart and event listeners
 document.addEventListener('DOMContentLoaded', () => {
     loadCart();
 
@@ -221,7 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target.id === CART_ICON_ID || e.target.closest(`#${CART_ICON_ID}`)) {
             const urlParams = new URLSearchParams(window.location.search);
             const email = urlParams.get('email');
-            console.log('Cart icon clicked, email:', email);
             window.location.href = `../Pages/cart/cart.html?email=${email}`;
         }
     });

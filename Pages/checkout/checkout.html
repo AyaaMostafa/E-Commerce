@@ -4,40 +4,48 @@
             Complete Your Purchase
             <span style="display: block; width: 80px; height: 3px; background: #F88C5E; margin: 15px auto 0;"></span>
         </h2>
-        
+
         <div class="checkout-container" style="display: flex; gap: 30px;">
-            <div class="checkout-form-container" style="flex: 2; background: white; border-radius: 12px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+            <div class="checkout-form-container"
+                style="flex: 2; background: white; border-radius: 12px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
                 <h3 style="color: #3B3B3B; font-size: 1.8rem; margin-bottom: 25px;">Shipping Information</h3>
                 <form id="checkoutForm" style="max-width: 100%; margin: 0 auto;">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px;">
                         <div>
-                            <label for="firstName" style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">First Name</label>
-                            <input type="text" id="firstName" required 
-                                   style="width: 100%; padding: 12px 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
+                            <label for="firstName"
+                                style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">First
+                                Name</label>
+                            <input type="text" id="firstName" required
+                                style="width: 100%; padding: 12px 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
                         </div>
                         <div>
-                            <label for="lastName" style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">Last Name</label>
-                            <input type="text" id="lastName" required 
-                                   style="width: 100%; padding: 12px 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
+                            <label for="lastName"
+                                style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">Last
+                                Name</label>
+                            <input type="text" id="lastName" required
+                                style="width: 100%; padding: 12px 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
                         </div>
                     </div>
-                    
+
                     <div style="margin-bottom: 25px;">
-                        <label for="address" style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">Address</label>
-                        <input type="text" id="address" required 
-                               style="width: 100%; padding: 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
+                        <label for="address"
+                            style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">Address</label>
+                        <input type="text" id="address" required
+                            style="width: 100%; padding: 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
                     </div>
-                    
+
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px;">
                         <div>
-                            <label for="city" style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">City</label>
-                            <input type="text" id="city" required 
-                                   style="width: 100%; padding: 12px 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
+                            <label for="city"
+                                style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">City</label>
+                            <input type="text" id="city" required
+                                style="width: 100%; padding: 12px 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
                         </div>
                         <div>
-                            <label for="country" style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">Country</label>
-                            <select id="country" required 
-                                    style="width: 100%; padding: 12px 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease; background-color: white;">
+                            <label for="country"
+                                style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">Country</label>
+                            <select id="country" required
+                                style="width: 100%; padding: 12px 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease; background-color: white;">
                                 <option value="">Select Country</option>
                                 <option value="US">United States</option>
                                 <option value="UK">United Kingdom</option>
@@ -46,68 +54,82 @@
                             </select>
                         </div>
                     </div>
-                    
+
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px;">
                         <div>
-                            <label for="zipCode" style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">ZIP Code</label>
-                            <input type="text" id="zipCode" required 
-                                   style="width: 100%; padding: 12px 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
+                            <label for="zipCode"
+                                style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">ZIP
+                                Code</label>
+                            <input type="text" id="zipCode" required
+                                style="width: 100%; padding: 12px 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
                         </div>
                         <div>
-                            <label for="phone" style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">Phone Number</label>
-                            <input type="tel" id="phone" 
-                                   style="width: 100%; padding: 12px 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
+                            <label for="phone"
+                                style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">Phone
+                                Number</label>
+                            <input type="tel" id="phone"
+                                style="width: 100%; padding: 12px 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
                         </div>
                     </div>
-                    
+
                     <div style="margin-bottom: 25px;">
-                        <label for="email" style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">Email</label>
-                        <input type="email" id="email" required 
-                               style="width: 100%; padding: 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
+                        <label for="email"
+                            style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">Email</label>
+                        <input type="email" id="email" required
+                            style="width: 100%; padding: 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
                     </div>
-                    
+
                     <h3 style="color: #3B3B3B; font-size: 1.8rem; margin: 40px 0 25px;">Payment Method</h3>
-                    
+
                     <div style="margin-bottom: 30px;">
-                        <div class="payment-option" style="display: flex; align-items: center; padding: 15px; border: 1px solid #E5E5E5; border-radius: 8px; margin-bottom: 15px; cursor: pointer; transition: all 0.3s ease;">
+                        <div class="payment-option"
+                            style="display: flex; align-items: center; padding: 15px; border: 1px solid #E5E5E5; border-radius: 8px; margin-bottom: 15px; cursor: pointer; transition: all 0.3s ease;">
                             <input type="radio" name="payment" id="creditCard" checked style="margin-right: 15px;">
                             <span style="margin-right: 15px; font-size: 1.5rem;">💳</span>
                             <label for="creditCard" style="font-weight: 500; color: #3B3B3B;">Credit Card</label>
                         </div>
-                        
-                        <div class="payment-option" style="display: flex; align-items: center; padding: 15px; border: 1px solid #E5E5E5; border-radius: 8px; margin-bottom: 15px; cursor: pointer; transition: all 0.3s ease;">
+
+                        <div class="payment-option"
+                            style="display: flex; align-items: center; padding: 15px; border: 1px solid #E5E5E5; border-radius: 8px; margin-bottom: 15px; cursor: pointer; transition: all 0.3s ease;">
                             <input type="radio" name="payment" id="paypal" style="margin-right: 15px;">
-                            <span style="margin-right: 15px;"><img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" alt="PayPal" style="height: 23px;"></span>
+                            <span style="margin-right: 15px;"><img
+                                    src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg"
+                                    alt="PayPal" style="height: 23px;"></span>
                             <label for="paypal" style="font-weight: 500; color: #3B3B3B;">PayPal</label>
                         </div>
-                        
-                        <div id="creditCardDetails" style="padding: 20px; background-color: #F8F8F8; border-radius: 8px; margin-top: 20px;">
+
+                        <div id="creditCardDetails"
+                            style="padding: 20px; background-color: #F8F8F8; border-radius: 8px; margin-top: 20px;">
                             <div style="margin-bottom: 20px;">
-                                <label for="cardNumber" style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">Card Number</label>
-                                <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" 
-                                       style="width: 100%; padding: 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
+                                <label for="cardNumber"
+                                    style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">Card
+                                    Number</label>
+                                <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456"
+                                    style="width: 100%; padding: 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
                             </div>
-                            
+
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                                 <div>
-                                    <label for="expiryDate" style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">Expiry Date</label>
-                                    <input type="text" id="expiryDate" placeholder="MM/YY" 
-                                           style="width: 100%; padding: 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
+                                    <label for="expiryDate"
+                                        style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">Expiry
+                                        Date</label>
+                                    <input type="text" id="expiryDate" placeholder="MM/YY"
+                                        style="width: 100%; padding: 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
                                 </div>
                                 <div>
-                                    <label for="cvv" style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">CVV</label>
-                                    <input type="text" id="cvv" placeholder="123" 
-                                           style="width: 100%; padding: 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
+                                    <label for="cvv"
+                                        style="display: block; margin-bottom: 8px; color: #3B3B3B; font-weight: 500;">CVV</label>
+                                    <input type="text" id="cvv" placeholder="123"
+                                        style="width: 100%; padding: 15px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div id="paypalButtonContainer" style="display: none; margin-top: 20px;"></div>
                     </div>
-                    
+
                     <div style="text-align: center;">
-                        <button type="submit" 
-                                style="background-color: #F88C5E; color: white; padding: 14px 35px; border: none; border-radius: 8px; 
+                        <button type="submit" style="background-color: #F88C5E; color: white; padding: 14px 35px; border: none; border-radius: 8px; 
                                        font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
                                        box-shadow: 0 4px 15px rgba(248, 140, 94, 0.3);">
                             Complete Order
@@ -116,33 +138,33 @@
                     </div>
                 </form>
             </div>
-                
-                
-            </div>
+
+
         </div>
     </div>
+</div>
 </div>
 <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const paymentOptions = document.querySelectorAll('.payment-option');
         const creditCardDetails = document.getElementById('creditCardDetails');
         const paypalButtonContainer = document.getElementById('paypalButtonContainer');
-        
+
         paymentOptions.forEach(option => {
-            option.addEventListener('click', function() {
+            option.addEventListener('click', function () {
                 const radio = this.querySelector('input[type="radio"]');
                 radio.checked = true;
-                
+
                 paymentOptions.forEach(opt => {
                     opt.style.borderColor = '#E5E5E5';
                     opt.style.backgroundColor = 'white';
                 });
-                
+
                 this.style.borderColor = '#F88C5E';
                 this.style.backgroundColor = 'rgba(248, 140, 94, 0.05)';
-                
+
                 if (radio.id === 'creditCard') {
                     creditCardDetails.style.display = 'block';
                     paypalButtonContainer.style.display = 'none';
@@ -152,7 +174,7 @@
                 }
             });
         });
-        
+
         paypal.Buttons({
             style: {
                 color: 'gold',
@@ -160,39 +182,39 @@
                 label: 'pay',
                 height: 50
             },
-            createOrder: function(data, actions) {
+            createOrder: function (data, actions) {
                 return actions.order.create({
                     purchase_units: [{
                         amount: {
-                            value: '19.94' 
+                            value: '19.94'
                         }
                     }]
                 });
             },
-            onApprove: function(data, actions) {
-                return actions.order.capture().then(function(details) {
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (details) {
                     showNotification('Payment successful! Your order is complete.', '#88A27E');
                     setTimeout(() => {
                         document.getElementById('checkoutForm').reset();
                     }, 2000);
                 });
             },
-            onError: function(err) {
+            onError: function (err) {
                 showNotification('Payment failed. Please try again.', '#F88C5E');
                 console.error(err);
             }
         }).render('#paypalButtonContainer');
-        
-        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+
+        document.getElementById('checkoutForm').addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             const paymentMethod = document.querySelector('input[name="payment"]:checked').id;
-            
+
             if (paymentMethod === 'creditCard') {
                 // Validate credit card form
                 let isValid = true;
                 const requiredFields = this.querySelectorAll('[required]');
-                
+
                 requiredFields.forEach(field => {
                     if (!field.value.trim()) {
                         field.style.borderColor = '#F88C5E';
@@ -201,27 +223,27 @@
                         field.style.borderColor = '#E5E5E5';
                     }
                 });
-                
+
                 // Additional credit card validation
                 const cardNumber = document.getElementById('cardNumber').value;
                 const expiryDate = document.getElementById('expiryDate').value;
                 const cvv = document.getElementById('cvv').value;
-                
+
                 if (!cardNumber || cardNumber.replace(/\s/g, '').length < 16) {
                     document.getElementById('cardNumber').style.borderColor = '#F88C5E';
                     isValid = false;
                 }
-                
+
                 if (!expiryDate || !expiryDate.match(/^(0[1-9]|1[0-2])\/?([0-9]{2})$/)) {
                     document.getElementById('expiryDate').style.borderColor = '#F88C5E';
                     isValid = false;
                 }
-                
+
                 if (!cvv || cvv.length < 3) {
                     document.getElementById('cvv').style.borderColor = '#F88C5E';
                     isValid = false;
                 }
-                
+
                 if (isValid) {
                     showNotification('Order placed successfully! Thank you for your purchase.', '#88A27E');
                     this.reset();
@@ -231,11 +253,11 @@
             }
             // PayPal payment is handled by the PayPal button
         });
-        
+
         // Input field validation
         const inputs = document.querySelectorAll('input');
         inputs.forEach(input => {
-            input.addEventListener('input', function() {
+            input.addEventListener('input', function () {
                 if (this.hasAttribute('required') && !this.value.trim()) {
                     this.style.borderColor = '#F88C5E';
                 } else {
@@ -243,7 +265,7 @@
                 }
             });
         });
-        
+
         // Notification function (same as in your ratings.html)
         function showNotification(message, color) {
             const notification = document.createElement('div');
@@ -261,16 +283,16 @@
             notification.style.transform = 'translateY(20px)';
             notification.style.transition = 'all 0.3s ease';
             document.body.appendChild(notification);
-            
+
             setTimeout(() => {
                 notification.style.opacity = '1';
                 notification.style.transform = 'translateY(0)';
             }, 100);
-            
+
             setTimeout(() => {
                 notification.style.opacity = '0';
                 setTimeout(() => notification.remove(), 300);
             }, 3000);
         }
-    });
+    });
 </script>

@@ -25,7 +25,6 @@
             background-color: #f4f4f9;
         }
 
-        /* Header Section */
         .header-section {
             position: relative;
             background: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836') no-repeat center center;
@@ -60,7 +59,6 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
-        /* Main Content */
         .main-content {
             max-width: 1200px;
             margin: 0 auto;
@@ -75,7 +73,6 @@
             color: #333;
         }
 
-        /* Buttons Section */
         .btn-section {
             display: flex;
             justify-content: center;
@@ -134,7 +131,6 @@
             transform: scale(1.05);
         }
 
-        /* Modal Styles */
         .modal-content {
             border-radius: 15px;
             background: linear-gradient(135deg, #ffffff, #f8f9fa);
@@ -196,7 +192,6 @@
             background-color: #e66b2f;
         }
 
-        /* Products Table */
         .products-table {
             max-height: 300px;
             overflow-y: auto;
@@ -228,7 +223,6 @@
             font-size: 0.9rem;
         }
 
-        /* Responsive Design */
         @media (max-width: 576px) {
             .header-section h2 {
                 font-size: 2rem;
@@ -251,19 +245,16 @@
     </style>
 </head>
 <body>
-    <!-- Header Section -->
     <div class="header-section">
         <h2>Admin Dashboard</h2>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
         <p id="adminMessage" class="text-success"></p>
 
-        <!-- Buttons Section -->
         <div class="btn-section">
-            <a href="/Pages/orders/orders.html" class="action-btn orders-btn">
-                <i class="bi bi-list"></i> View Orders
+            <a href="/Pages/manageorders/manageorders.html" class="action-btn orders-btn">
+                <i class="bi bi-list"></i> Manage Orders
             </a>
             <button class="action-btn add-admin-btn" data-bs-toggle="modal" data-bs-target="#addAdminModal">
                 <i class="bi bi-person-plus"></i> Add Admin
@@ -277,7 +268,6 @@
         </div>
     </div>
 
-    <!-- Add Admin Modal -->
     <div class="modal fade" id="addAdminModal" tabindex="-1" aria-labelledby="addAdminModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -317,7 +307,6 @@
         </div>
     </div>
 
-    <!-- Manage Products Modal -->
     <div class="modal fade" id="manageProductsModal" tabindex="-1" aria-labelledby="manageProductsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -326,7 +315,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Add Product Form -->
                     <form id="addProductForm" class="mb-4">
                         <div class="form-group">
                             <label for="productName">Product Name</label>
@@ -354,7 +342,6 @@
                         <button type="submit" class="btn btn-primary w-100">Add Product</button>
                     </form>
 
-                    <!-- Products List -->
                     <div class="products-table">
                         <table>
                             <thead>
@@ -376,7 +363,6 @@
         </div>
     </div>
 
-    <!-- Edit Product Modal -->
     <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">

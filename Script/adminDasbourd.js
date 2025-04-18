@@ -2,121 +2,72 @@ import { db } from './firebase-config.js';
 import { collection, getDocs, setDoc, doc, updateDoc, deleteDoc, query, where } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js';
 import Swal from 'https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm';
 
-// Function to display success/error messages
-function displaySuccessMessage(message) {
+const showMessage = (type, message) => {
     Swal.fire({ 
-        icon: 'success', 
-        title: 'Success', 
+        icon: type, 
+        title: type === 'success' ? 'Success' : 'Error', 
         text: message, 
         background: '#2a2a2a', 
         color: '#fff', 
         confirmButtonColor: '#ff7e3f',
-        timer: 1500 
+        timer: type === 'success' ? 1500 : undefined 
     });
-}
+};
 
-function displayErrorMessage(message) {
-    Swal.fire({ 
-        icon: 'error', 
-        title: 'Error', 
-        text: message, 
-        background: '#2a2a2a', 
-        color: '#fff', 
-        confirmButtonColor: '#ff7e3f' 
-    });
-}
-
-// Load Categories from Firestore and populate dropdowns
 async function loadCategories() {
     try {
         const categoriesSnapshot = await getDocs(collection(db, 'food'));
         const categoryDropdown = document.getElementById('categoryDropdown');
         const editCategoryDropdown = document.getElementById('editCategoryDropdown');
-
         categoryDropdown.innerHTML = '<option value="" disabled selected>Select Category</option>';
         editCategoryDropdown.innerHTML = '<option value="" disabled selected>Select Category</option>';
 
         categoriesSnapshot.forEach((docSnap) => {
-            const category = docSnap.id; // The category name is the document ID (e.g., burger, pizza)
+            const category = docSnap.id;
             const option = document.createElement('option');
             option.value = category;
             option.textContent = category;
             categoryDropdown.appendChild(option);
-
             const editOption = document.createElement('option');
             editOption.value = category;
             editOption.textContent = category;
             editCategoryDropdown.appendChild(editOption);
         });
     } catch (error) {
-        console.error('Error loading categories:', error.message);
-        displayErrorMessage('Failed to load categories.');
+        showMessage('error', 'Failed to load categories.');
     }
 }
 
-// Check if user is admin on page load
 document.addEventListener("DOMContentLoaded", () => {
     const user = JSON.parse(localStorage.getItem("currentUser"));
-    console.log("Current User:", user); // Debugging
     if (!user || user.accountType !== "admin") {
-        displayErrorMessage("Unauthorized access!");
+        showMessage('error', 'Unauthorized access!');
         setTimeout(() => window.location.href = "/index.html", 1500);
         return;
     }
-    const adminMessage = document.getElementById('adminMessage');
-    if (adminMessage) {
-        adminMessage.textContent = `Welcome, ${user.name}! You are logged in as Admin.`;
-    }
+
+    document.getElementById('adminMessage').textContent = `Welcome, ${user.name}! You are logged in as Admin.`;
     loadProducts();
-    loadCategories(); // Load categories on page load
+    loadCategories();
 
-    // Add event listeners for buttons if they exist
-    const logoutButton = document.getElementById('logoutButton');
-    if (logoutButton) {
-        logoutButton.addEventListener('click', logout);
-    } else {
-        console.error("Logout button not found!");
-    }
+    document.getElementById('logoutButton')?.addEventListener('click', logout);
+    document.getElementById('addAdminButton')?.addEventListener('click', submitAddAdminForm);
+    document.getElementById('editProductButton')?.addEventListener('click', submitEditProductForm);
 
-    const addAdminButton = document.getElementById('addAdminButton');
-    if (addAdminButton) {
-        addAdminButton.addEventListener('click', submitAddAdminForm);
-    } else {
-        console.error("Add Admin button not found!");
-    }
-
-    const editProductButton = document.getElementById('editProductButton');
-    if (editProductButton) {
-        editProductButton.addEventListener('click', submitEditProductForm);
-    } else {
-        console.error("Edit Product button not found!");
-    }
-
-    // Fix accessibility issue: Move focus when modal is hidden
-    const modals = [document.getElementById('addAdminModal'), document.getElementById('manageProductsModal'), document.getElementById('editProductModal')];
-    modals.forEach(modal => {
-        if (modal) {
-            modal.addEventListener('hidden.bs.modal', () => {
-                const triggerButton = document.querySelector(`[data-bs-target="#${modal.id}"]`);
-                if (triggerButton) {
-                    triggerButton.focus(); // Move focus back to the button that opened the modal
-                }
-            });
-        }
+    [document.getElementById('addAdminModal'), document.getElementById('manageProductsModal'), document.getElementById('editProductModal')].forEach(modal => {
+        modal?.addEventListener('hidden.bs.modal', () => {
+            document.querySelector(`[data-bs-target="#${modal.id}"]`)?.focus();
+        });
     });
 });
 
-// Logout function
 function logout() {
     localStorage.removeItem("currentUser");
-    displaySuccessMessage("Logged out successfully!");
-    setTimeout(() => {
-        window.location.href = "/index.html";
-    }, 1500);
+    showMessage("success", "Logged out successfully!");
+    setTimeout(() => window.location.href = "/index.html", 1500);
 }
-window.logout = logout; // Ensure it's globally accessible
+window.logout = logout;
 
-// Add Admin Form Submission
 async function submitAddAdminForm() {
     const name = document.getElementById("adminName").value.trim();
     const email = document.getElementById("adminEmail").value.trim();
@@ -124,85 +75,41 @@ async function submitAddAdminForm() {
     const phone = document.getElementById("adminPhone").value.trim();
     const location = document.getElementById("adminLocation").value.trim();
 
-    console.log("Form Data:", { name, email, password, phone, location }); // Debugging
-
-    // Validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        console.log("Validation Failed: Invalid email"); // Debugging
-        return displayErrorMessage("Please enter a valid email address.");
-    }
-    if (!password || password.length < 6) {
-        console.log("Validation Failed: Password too short"); // Debugging
-        return displayErrorMessage("Password must be at least 6 characters long.");
-    }
-    if (!name || name.length < 3) {
-        console.log("Validation Failed: Name too short"); // Debugging
-        return displayErrorMessage("Full name must be at least 3 characters long.");
-    }
-    const phoneRegex = /^\d{10,15}$/;
-    if (!phone || !phoneRegex.test(phone)) {
-        console.log("Validation Failed: Invalid phone number"); // Debugging
-        return displayErrorMessage("Please enter a valid phone number (10-15 digits).");
-    }
-    if (!location || location.length < 3) {
-        console.log("Validation Failed: Location too short"); // Debugging
-        return displayErrorMessage("Location must be at least 3 characters long.");
-    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showMessage('error', "Invalid email address.");
+    if (password.length < 6) return showMessage('error', "Password must be at least 6 characters.");
+    if (name.length < 3) return showMessage('error', "Name must be at least 3 characters.");
+    if (!/^\d{10,15}$/.test(phone)) return showMessage('error', "Invalid phone number (10-15 digits).");
+    if (location.length < 3) return showMessage('error', "Location must be at least 3 characters.");
 
     try {
-        console.log("Encrypting Password..."); // Debugging
         const encryptedPassword = CryptoJS.SHA256(password).toString();
         const emailKey = email.toLowerCase().replace(/\./g, "_");
-        console.log("Encrypted Password:", encryptedPassword); // Debugging
-        console.log("Email Key:", emailKey); // Debugging
+        const userSnapshot = await getDocs(query(collection(db, "users"), where("email", "==", email)));
+        if (!userSnapshot.empty) return showMessage('error', "Email already registered.");
 
-        // Check if email already exists
-        console.log("Checking if email exists..."); // Debugging
-        const usersRef = collection(db, "users");
-        const userQuery = query(usersRef, where("email", "==", email));
-        const userSnapshot = await getDocs(userQuery);
-
-        if (!userSnapshot.empty) {
-            console.log("Email already registered"); // Debugging
-            return displayErrorMessage("Email already registered.");
-        }
-
-        // Add new admin to Firestore
-        console.log("Adding new admin to Firestore..."); // Debugging
-        const userData = { name, email, password: encryptedPassword, phone, location, accountType: "admin" };
-        await setDoc(doc(db, "users", emailKey), userData);
-
-        console.log("Admin added successfully"); // Debugging
-        displaySuccessMessage("Admin added successfully!");
+        await setDoc(doc(db, "users", emailKey), { name, email, password: encryptedPassword, phone, location, accountType: "admin" });
+        showMessage('success', "Admin added successfully!");
         document.getElementById("addAdminForm").reset();
-        const addAdminModal = bootstrap.Modal.getInstance(document.getElementById('addAdminModal'));
-        addAdminModal.hide();
+        bootstrap.Modal.getInstance(document.getElementById('addAdminModal')).hide();
     } catch (error) {
-        console.error("Error adding admin:", error); // Debugging
-        displayErrorMessage(`Failed to add admin: ${error.message}`);
+        showMessage('error', "Failed to add admin.");
     }
 }
-window.submitAddAdminForm = submitAddAdminForm; // Ensure it's globally accessible
+window.submitAddAdminForm = submitAddAdminForm;
 
-// Load Products
 async function loadProducts() {
     try {
         const productsList = document.getElementById('productsList');
         productsList.innerHTML = '';
-
-        // Get all categories under 'food'
         const categoriesSnapshot = await getDocs(collection(db, 'food'));
         if (categoriesSnapshot.empty) {
             productsList.innerHTML = "<tr><td colspan='4' class='text-center'>No products found.</td></tr>";
             return;
         }
 
-        // Loop through each category to get products
         for (const categoryDoc of categoriesSnapshot.docs) {
             const category = categoryDoc.id;
             const itemsSnapshot = await getDocs(collection(db, `food/${category}/items`));
-            
             itemsSnapshot.forEach((docSnap) => {
                 const product = docSnap.data();
                 const productId = docSnap.id;
@@ -224,12 +131,10 @@ async function loadProducts() {
             productsList.innerHTML = "<tr><td colspan='4' class='text-center'>No products found.</td></tr>";
         }
     } catch (error) {
-        console.error('Error loading products:', error.message);
-        displayErrorMessage('Failed to load products.');
+        showMessage('error', 'Failed to load products.');
     }
 }
 
-// Add Product Form Submission
 document.getElementById('addProductForm').onsubmit = async function(event) {
     event.preventDefault();
     const name = document.getElementById('productName').value.trim();
@@ -238,59 +143,35 @@ document.getElementById('addProductForm').onsubmit = async function(event) {
     const image = document.getElementById('productImage').value.trim();
     const description = document.getElementById('productDescription').value.trim();
 
-    // Validation
-    if (!name || name.length < 3) {
-        return displayErrorMessage('Product name must be at least 3 characters long.');
-    }
-    if (isNaN(price) || price <= 0) {
-        return displayErrorMessage('Please enter a valid price greater than 0.');
-    }
-    if (!category || category.length < 2) {
-        return displayErrorMessage('Please enter a valid category (at least 2 characters).');
-    }
-    const urlRegex = /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|svg))$/i;
-    if (!urlRegex.test(image)) {
-        return displayErrorMessage('Please enter a valid image URL (png, jpg, jpeg, gif, svg).');
-    }
-    if (!description || description.length < 10) {
-        return displayErrorMessage('Description must be at least 10 characters long.');
-    }
+    if (name.length < 3) return showMessage('error', 'Product name must be at least 3 characters.');
+    if (isNaN(price) || price <= 0) return showMessage('error', 'Price must be greater than 0.');
+    if (category.length < 2) return showMessage('error', 'Category must be at least 2 characters.');
+    if (description.length < 10) return showMessage('error', 'Description must be at least 10 characters.');
 
     try {
-        // Add product to Firestore under food/[category]/items
         const productId = doc(collection(db, `food/${category}/items`)).id;
-        await setDoc(doc(db, `food/${category}/items`, productId), {
-            name,
-            price,
-            image,
-            description,
-        });
-
-        displaySuccessMessage('Product added successfully!');
+        await setDoc(doc(db, `food/${category}/items`, productId), { name, price, image, description });
+        showMessage('success', 'Product added successfully!');
         document.getElementById('addProductForm').reset();
         loadProducts();
-        loadCategories(); // Reload categories to update dropdown
+        loadCategories();
     } catch (error) {
-        console.error('Error adding product:', error.message);
-        displayErrorMessage('Failed to add product.');
+        showMessage('error', 'Failed to add product.');
     }
 };
 
-// Open Edit Product Modal
 function openEditProductModal(id, name, price, category, image, description) {
     document.getElementById('editProductId').value = id;
     document.getElementById('editProductName').value = name;
     document.getElementById('editProductPrice').value = price;
     document.getElementById('editProductCategory').value = category;
-    document.getElementById('editProductCategoryOriginal').value = category; // Store original category
+    document.getElementById('editProductCategoryOriginal').value = category;
     document.getElementById('editProductImage').value = image;
     document.getElementById('editProductDescription').value = description;
-    const editProductModal = new bootstrap.Modal(document.getElementById('editProductModal'));
-    editProductModal.show();
+    new bootstrap.Modal(document.getElementById('editProductModal')).show();
 }
-window.openEditProductModal = openEditProductModal; // Ensure it's globally accessible
+window.openEditProductModal = openEditProductModal;
 
-// Edit Product Form Submission
 async function submitEditProductForm() {
     const id = document.getElementById('editProductId').value;
     const name = document.getElementById('editProductName').value.trim();
@@ -300,58 +181,29 @@ async function submitEditProductForm() {
     const image = document.getElementById('editProductImage').value.trim();
     const description = document.getElementById('editProductDescription').value.trim();
 
-    // Validation
-    if (!name || name.length < 3) {
-        return displayErrorMessage('Product name must be at least 3 characters long.');
-    }
-    if (isNaN(price) || price <= 0) {
-        return displayErrorMessage('Please enter a valid price greater than 0.');
-    }
-    if (!category || category.length < 2) {
-        return displayErrorMessage('Please enter a valid category (at least 2 characters).');
-    }
-    const urlRegex = /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|svg))$/i;
-    if (!urlRegex.test(image)) {
-        return displayErrorMessage('Please enter a valid image URL (png, jpg, jpeg, gif, svg).');
-    }
-    if (!description || description.length < 10) {
-        return displayErrorMessage('Description must be at least 10 characters long.');
-    }
+    if (name.length < 3) return showMessage('error', 'Product name must be at least 3 characters.');
+    if (isNaN(price) || price <= 0) return showMessage('error', 'Price must be greater than 0.');
+    if (category.length < 2) return showMessage('error', 'Category must be at least 2 characters.');
+    if (description.length < 10) return showMessage('error', 'Description must be at least 10 characters.');
 
     try {
         if (category === originalCategory) {
-            // Update product in the same category
-            await updateDoc(doc(db, `food/${category}/items`, id), {
-                name,
-                price,
-                image,
-                description,
-            });
+            await updateDoc(doc(db, `food/${category}/items`, id), { name, price, image, description });
         } else {
-            // Delete from old category and add to new category
             await deleteDoc(doc(db, `food/${originalCategory}/items`, id));
             const newProductId = doc(collection(db, `food/${category}/items`)).id;
-            await setDoc(doc(db, `food/${category}/items`, newProductId), {
-                name,
-                price,
-                image,
-                description,
-            });
+            await setDoc(doc(db, `food/${category}/items`, newProductId), { name, price, image, description });
         }
-
-        displaySuccessMessage('Product updated successfully!');
-        const editProductModal = bootstrap.Modal.getInstance(document.getElementById('editProductModal'));
-        editProductModal.hide();
+        showMessage('success', 'Product updated successfully!');
+        bootstrap.Modal.getInstance(document.getElementById('editProductModal')).hide();
         loadProducts();
-        loadCategories(); // Reload categories to update dropdown
+        loadCategories();
     } catch (error) {
-        console.error('Error updating product:', error.message);
-        displayErrorMessage('Failed to update product.');
+        showMessage('error', 'Failed to update product.');
     }
 }
-window.submitEditProductForm = submitEditProductForm; // Ensure it's globally accessible
+window.submitEditProductForm = submitEditProductForm;
 
-// Delete Product
 function deleteProduct(id, category) {
     Swal.fire({
         title: 'Are you sure?',
@@ -367,13 +219,12 @@ function deleteProduct(id, category) {
         if (result.isConfirmed) {
             try {
                 await deleteDoc(doc(db, `food/${category}/items`, id));
-                displaySuccessMessage('Product deleted successfully!');
+                showMessage('success', 'Product deleted successfully!');
                 loadProducts();
             } catch (error) {
-                console.error('Error deleting product:', error.message);
-                displayErrorMessage('Failed to delete product.');
+                showMessage('error', 'Failed to delete product.');
             }
         }
     });
 }
-window.deleteProduct = deleteProduct; // Ensure it's globally accessible
+window.deleteProduct = deleteProduct;

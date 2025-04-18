@@ -7,22 +7,21 @@
         default-src 'self';
         font-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net data:;
         style-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com 'unsafe-inline';
-        script-src 'self' https://cdn.jsdelivr.net https://www.gstatic.com https://cdnjs.cloudflare.com 'unsafe-inline';
+        script-src 'self' https://cdn.jsdelivr.net https://www.gstatic.com 'unsafe-inline';
         connect-src 'self' https://firestore.googleapis.com;
-        img-src 'self' https://images.unsplash.com data:;
+        img-src 'self' data: https://images.unsplash.com https://www.chefspencil.com https://www.tasteofhome.com https://*.mm.bing.net;
     ">
-    <title>Admin Dashboard - ATAM</title>
+    <title>Order Status - ATAM</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js" onload="window.cryptoJsLoaded = true"></script>
     <style>
         body {
+            background-color: #f4f4f9;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
         }
 
         /* Header Section */
@@ -60,172 +59,95 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
-        /* Main Content */
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        #adminMessage {
+        /* User Message */
+        #userMessage {
             font-size: 1.2rem;
             font-weight: 500;
             text-align: center;
             margin-bottom: 20px;
-            color: #333;
         }
 
-        /* Buttons Section */
+        /* Orders List Section */
+        #ordersList {
+            margin-bottom: 40px;
+        }
+
+        .order-item {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .order-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .order-item h5 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .order-item-detail {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 10px;
+            padding-left: 15px;
+            border-left: 3px solid #ff7e3f;
+        }
+
+        .status-pending { color: #ffc107; font-weight: 500; }
+        .status-accepted { color: #28a745; font-weight: 500; }
+        .status-rejected { color: #dc3545; font-weight: 500; }
+        .status-unknown { color: #6c757d; font-weight: 500; }
+
+        .order-item p {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        /* Buttons */
         .btn-section {
             display: flex;
             justify-content: center;
             gap: 15px;
             margin-top: 30px;
-            margin-bottom: 40px;
         }
 
-        .action-btn {
+        .btn-secondary, .btn-danger {
             padding: 12px 25px;
-            border: none;
             border-radius: 8px;
             font-size: 1rem;
             font-weight: 500;
-            color: white;
-            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
-        .orders-btn {
+        .btn-secondary {
             background-color: #6c757d;
         }
 
-        .orders-btn:hover {
+        .btn-secondary:hover {
             background-color: #5a6268;
             transform: scale(1.05);
         }
 
-        .add-admin-btn {
-            background-color: #ff7e3f;
-        }
-
-        .add-admin-btn:hover {
-            background-color: #e66b2f;
-            transform: scale(1.05);
-        }
-
-        .manage-products-btn {
-            background-color: #007bff;
-        }
-
-        .manage-products-btn:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
-        }
-
-        .logout-btn {
+        .btn-danger {
             background-color: #dc3545;
         }
 
-        .logout-btn:hover {
+        .btn-danger:hover {
             background-color: #c82333;
             transform: scale(1.05);
-        }
-
-        /* Modal Styles */
-        .modal-content {
-            border-radius: 15px;
-            background: linear-gradient(135deg, #ffffff, #f8f9fa);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .modal-header {
-            background-color: #ff7e3f;
-            color: white;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
-        }
-
-        .modal-title {
-            font-weight: 600;
-        }
-
-        .modal-body {
-            padding: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: #333;
-            margin-bottom: 8px;
-        }
-
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            outline: none;
-            border-color: #ff7e3f;
-        }
-
-        .modal-footer .btn {
-            padding: 10px 20px;
-            border-radius: 8px;
-        }
-
-        .modal-footer .btn-primary {
-            background-color: #ff7e3f;
-            border: none;
-        }
-
-        .modal-footer .btn-primary:hover {
-            background-color: #e66b2f;
-        }
-
-        /* Products Table */
-        .products-table {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-        }
-
-        .products-table table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .products-table th, .products-table td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .products-table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-        }
-
-        .products-table td {
-            font-size: 0.9rem;
-        }
-
-        .products-table .btn {
-            padding: 5px 10px;
-            font-size: 0.9rem;
         }
 
         /* Responsive Design */
@@ -234,18 +156,22 @@
                 font-size: 2rem;
             }
 
+            .order-item {
+                padding: 15px;
+            }
+
+            .order-item h5 {
+                font-size: 1.2rem;
+            }
+
             .btn-section {
                 flex-direction: column;
                 gap: 10px;
             }
 
-            .action-btn {
+            .btn-secondary, .btn-danger {
                 width: 100%;
                 justify-content: center;
-            }
-
-            .modal-body {
-                padding: 20px;
             }
         }
     </style>
@@ -253,175 +179,27 @@
 <body>
     <!-- Header Section -->
     <div class="header-section">
-        <h2>Admin Dashboard</h2>
+        <h2>Your Orders</h2>
     </div>
 
     <!-- Main Content -->
-    <div class="main-content">
-        <p id="adminMessage" class="text-success"></p>
+    <div class="container mt-4">
+        <p id="userMessage" class="text-success"></p>
+        
+        <!-- Orders List Section -->
+        <div id="ordersList" class="mb-4"></div>
 
         <!-- Buttons Section -->
         <div class="btn-section">
-            <a href="/Pages/admin/orders.html" class="action-btn orders-btn">
-                <i class="bi bi-list"></i> View Orders
+            <a href="/index.html" class="btn btn-secondary">
+                <i class="bi bi-house-door"></i> Back to Home
             </a>
-            <button class="action-btn add-admin-btn" data-bs-toggle="modal" data-bs-target="#addAdminModal">
-                <i class="bi bi-person-plus"></i> Add Admin
-            </button>
-            <button class="action-btn manage-products-btn" data-bs-toggle="modal" data-bs-target="#manageProductsModal">
-                <i class="bi bi-box"></i> Manage Products
-            </button>
-            <button id="logoutButton" class="action-btn logout-btn">
+            <button id="logoutBtn" class="btn btn-danger" onclick="logout()">
                 <i class="bi bi-box-arrow-right"></i> Logout
             </button>
         </div>
     </div>
 
-    <!-- Add Admin Modal -->
-    <div class="modal fade" id="addAdminModal" tabindex="-1" aria-labelledby="addAdminModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addAdminModalLabel">Add New Admin</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addAdminForm">
-                        <div class="form-group">
-                            <label for="adminName">Full Name</label>
-                            <input type="text" id="adminName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="adminEmail">Email</label>
-                            <input type="email" id="adminEmail" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="adminPassword">Password</label>
-                            <input type="password" id="adminPassword" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="adminPhone">Phone</label>
-                            <input type="tel" id="adminPhone" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="adminLocation">Location</label>
-                            <input type="text" id="adminLocation" required>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" id="addAdminButton" class="btn btn-primary">Add Admin</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Manage Products Modal -->
-    <div class="modal fade" id="manageProductsModal" tabindex="-1" aria-labelledby="manageProductsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="manageProductsModalLabel">Manage Products</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Add Product Form -->
-                    <form id="addProductForm" class="mb-4">
-                        <div class="form-group">
-                            <label for="productName">Product Name</label>
-                            <input type="text" id="productName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="productPrice">Price</label>
-                            <input type="number" id="productPrice" step="0.01" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="productCategory">Category</label>
-                            <input type="text" id="productCategory" required placeholder="Enter or select a category">
-                            <select id="categoryDropdown" onchange="document.getElementById('productCategory').value = this.value;">
-                                <option value="" disabled selected>Select Category</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="productImage">Image URL</label>
-                            <input type="url" id="productImage" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="productDescription">Description</label>
-                            <textarea id="productDescription" required placeholder="Enter product description"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Add Product</button>
-                    </form>
-
-                    <!-- Products List -->
-                    <div class="products-table">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Price</th>
-                                    <th>Category</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="productsList"></tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Product Modal -->
-    <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editProductForm">
-                        <input type="hidden" id="editProductId">
-                        <input type="hidden" id="editProductCategoryOriginal">
-                        <div class="form-group">
-                            <label for="editProductName">Product Name</label>
-                            <input type="text" id="editProductName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editProductPrice">Price</label>
-                            <input type="number" id="editProductPrice" step="0.01" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editProductCategory">Category</label>
-                            <input type="text" id="editProductCategory" required placeholder="Enter or select a category">
-                            <select id="editCategoryDropdown" onchange="document.getElementById('editProductCategory').value = this.value;">
-                                <option value="" disabled selected>Select Category</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="editProductImage">Image URL</label>
-                            <input type="url" id="editProductImage" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editProductDescription">Description</label>
-                            <textarea id="editProductDescription" required placeholder="Enter product description"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" id="editProductButton" class="btn btn-primary">Save Changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="/Script/adminDashboard.js"></script>
+    <script type="module" src="/Script/orderdetails.js"></script>
 </body>
 </html>
